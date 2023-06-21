@@ -1,0 +1,39 @@
+name: wakelock_plus_web
+description: Web platform implementation of the wakelock_plus_platform_interface for the wakelock_plus plugin.
+version: 1.0.0
+repository: https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_web
+
+environment:
+  sdk: '>=2.17.0 <4.0.0'
+  flutter: '>=1.24.0-0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+
+  js: ^0.6.3
+
+  wakelock_plus_platform_interface:
+    # TODO: Publish this first to pub.dev, then point to live version.
+    path: "../wakelock_plus_platform_interface"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.1
+
+  wakelock_plus:
+    path: ../wakelock_plus
+
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: WakelockPlusWeb
+        fileName: wakelock_plus_web.dart
+
+  assets:
+    - assets/no_sleep.js
