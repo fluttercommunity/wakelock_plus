@@ -16,6 +16,9 @@ dependencies:
   wakelock_plus_platform_interface:
     # TODO: Publish this first to pub.dev, then point to live version.
     path: "../wakelock_plus_platform_interface"
+  wakelock_plus_macos:
+    # TODO: Publish this first to pub.dev, then point to live version.
+    path: "../wakelock_plus_macos"
 
 dev_dependencies:
   flutter_test:
@@ -46,7 +49,7 @@ flutter:
       ios:
         pluginClass: WakelockPlusPlugin
       macos:
-        pluginClass: WakelockPlusPlugin
+        default_package: wakelock_plus_macos
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

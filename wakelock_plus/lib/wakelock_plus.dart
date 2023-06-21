@@ -1,10 +1,12 @@
 // import 'dart:io';
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 // import 'package:wakelock/src/windows_stub.dart'
 // if (dart.library.io) 'package:wakelock_windows/wakelock_windows.dart';
-// import 'package:wakelock_macos/wakelock_macos.dart';
+import 'package:wakelock_plus_macos/wakelock_plus_macos.dart';
 
 /// The [WakelockPlusPlatformInterface] that is used by [WakelockPlus].
 ///
@@ -27,15 +29,14 @@ WakelockPlusPlatformInterface get _defaultPlatformInstance {
   // web.
   if (kIsWeb) return WakelockPlusPlatformInterface.instance;
 
-  // TODO: Re-enable once ported over
-  // if (Platform.isMacOS) {
-  //   // Assigning the macOS platform instance like this is not optimal.
-  //   // Ideally, we would use the default method channel instance on macOS,
-  //   // however, it is not yet entirely clear how to integrate with pigeon.
-  //   // This should just work fine and the io reference should be tree shaken
-  //   // on web.
-  //   return WakelockMacOS();
-  // }
+  if (Platform.isMacOS) {
+    // Assigning the macOS platform instance like this is not optimal.
+    // Ideally, we would use the default method channel instance on macOS,
+    // however, it is not yet entirely clear how to integrate with pigeon.
+    // This should just work fine and the io reference should be tree shaken
+    // on web.
+    return WakelockPlusMacOS();
+  }
 
   // TODO: Re-enable once ported over
   // if (Platform.isWindows) {

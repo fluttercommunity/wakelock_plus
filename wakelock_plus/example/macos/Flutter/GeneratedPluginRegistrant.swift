@@ -5,8 +5,8 @@
 import FlutterMacOS
 import Foundation
 
-import wakelock_plus
+import wakelock_plus_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  WakelockPlusPlugin.register(with: registry.registrar(forPlugin: "WakelockPlusPlugin"))
+  WakelockPlusMacosPlugin.register(with: registry.registrar(forPlugin: "WakelockPlusMacosPlugin"))
 }
