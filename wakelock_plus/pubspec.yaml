@@ -12,13 +12,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   meta: ^1.9.1
   wakelock_plus_platform_interface:
     # TODO: Publish this first to pub.dev, then point to live version.
     path: "../wakelock_plus_platform_interface"
-  wakelock_plus_web:
-    # TODO: Publish this first to pub.dev, then point to live version.
-    path: "../wakelock_plus_web"
 
   # Windows dependencies
   # win32 is compatible across v4 and v5 for Win32 only (not COM)
@@ -27,6 +26,10 @@ dependencies:
   # Linux dependencies
   dbus: ^0.7.8
   package_info_plus: ^4.0.2
+
+  # Web dependencies
+
+  js: ^0.6.3
 
 dev_dependencies:
   flutter_test:
@@ -64,7 +67,8 @@ flutter:
       linux:
         dartPluginClass: WakelockPlusLinuxPlugin
       web:
-        default_package: wakelock_plus_web
+        pluginClass: WakelockPlusWebPlugin
+        fileName: src/wakelock_plus_web_plugin.dart
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
@@ -96,3 +100,6 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+  assets:
+    - assets/no_sleep.js

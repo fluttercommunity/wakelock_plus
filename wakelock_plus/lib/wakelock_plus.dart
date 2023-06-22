@@ -1,17 +1,10 @@
-// import 'dart:io';
-
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-import 'package:wakelock_plus/src/wakelock_plus_linux_plugin.dart';
-import 'package:wakelock_plus/src/wakelock_plus_macos_plugin.dart';
-import 'package:wakelock_plus/src/wakelock_plus_windows_plugin.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
-// import 'package:wakelock/src/windows_stub.dart'
-// if (dart.library.io) 'package:wakelock_windows/wakelock_windows.dart';
-export 'src/wakelock_plus_windows_plugin.dart';
+
 export 'src/wakelock_plus_linux_plugin.dart';
 export 'src/wakelock_plus_macos_plugin.dart';
+export 'src/wakelock_plus_windows_plugin.dart'
+  if (dart.library.html) 'src/wakelock_plus_web_plugin.dart';
 
 /// The [WakelockPlusPlatformInterface] that is used by [WakelockPlus].
 ///
@@ -21,44 +14,7 @@ export 'src/wakelock_plus_macos_plugin.dart';
 /// test the `pigeon` method channel implementation. Therefore, we want to
 /// override this in tests that run on macOS (where there is no actual device).
 @visibleForTesting
-var wakelockPlusPlatformInstance = _defaultPlatformInstance;
-
-/// Workaround for configuring platform instances until https://github.com/flutter/flutter/issues/52267
-/// arrives on stable.
-///
-/// As soon as https://github.com/flutter/flutter/issues/52267#issuecomment-792302417
-/// is available, this should be completely removed and both macOS & Windows
-/// should use `dartPluginClass` instead.
-WakelockPlusPlatformInterface get _defaultPlatformInstance {
-  // We want to return early on web as the platform checks are unsupported on
-  // web.
-  if (kIsWeb) return WakelockPlusPlatformInterface.instance;
-
-  if (Platform.isMacOS) {
-    // Assigning the macOS platform instance like this is not optimal.
-    // Ideally, we would use the default method channel instance on macOS,
-    // however, it is not yet entirely clear how to integrate with pigeon.
-    // This should just work fine and the io reference should be tree shaken
-    // on web.
-    return WakelockPlusMacOSPlugin();
-  }
-
-  if (Platform.isWindows) {
-    // This does not feel like the correct way to assign the Windows
-    // implementation, however, the platform channels do not have to be used
-    // thanks to the win32 package. See https://github.com/flutter/flutter/issues/52267.
-    return WakelockPlusWindowsPlugin();
-  }
-
-  if (Platform.isLinux) {
-    // This does not feel like the correct way to assign the Linux
-    // implementation, however, the platform channels do not have to be used
-    // thanks to the dbus package. See https://github.com/flutter/flutter/issues/52267.
-    return WakelockPlusLinuxPlugin();
-  }
-
-  return WakelockPlusPlatformInterface.instance;
-}
+var wakelockPlusPlatformInstance = WakelockPlusPlatformInterface.instance;
 
 /// Class providing all wakelock functionality using static members.
 ///
@@ -76,7 +32,7 @@ WakelockPlusPlatformInterface get _defaultPlatformInstance {
 class WakelockPlus {
   /// Enables the wakelock.
   ///
-  /// This can simply be called using `Wakelock.enable()` and does not return
+  /// This can simply be called using `WakelockPlus.enable()` and does not return
   /// anything.
   /// You can await the [Future] to wait for the operation to complete.
   ///
@@ -86,7 +42,7 @@ class WakelockPlus {
 
   /// Disables the wakelock.
   ///
-  /// This can simply be called using `Wakelock.disable()` and does not return
+  /// This can simply be called using `WakelockPlus.disable()` and does not return
   /// anything.
   /// You can await the [Future] to wait for the operation to complete.
   ///
@@ -101,11 +57,11 @@ class WakelockPlus {
   ///
   /// ```dart
   /// // This line keeps the screen on.
-  /// Wakelock.toggle(enable: true);
+  /// WakelockPlus.toggle(enable: true);
   ///
   /// bool enableWakelock = false;
-  /// // The following line disables the wakelock.
-  /// Wakelock.toggle(enable: enableWakelock);
+  /// // The following line disables the WakelockPlus.
+  /// WakelockPlus.toggle(enable: enableWakelock);
   /// ```
   ///
   /// You can await the [Future] to wait for the operation to complete.
@@ -121,7 +77,7 @@ class WakelockPlus {
   /// [WakelockPlus.enabled] and await its result:
   ///
   /// ```dart
-  /// bool wakelockEnabled = await Wakelock.enabled;
+  /// bool wakelockEnabled = await WakelockPlus.enabled;
   /// ```
   static Future<bool> get enabled => wakelockPlusPlatformInstance.enabled;
 }

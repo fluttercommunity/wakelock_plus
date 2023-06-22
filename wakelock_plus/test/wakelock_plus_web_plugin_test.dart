@@ -1,20 +1,20 @@
 @TestOn('browser')
-library wakelock_web_test;
+library wakelock_plus_library_plugin_test;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:wakelock_plus/src/wakelock_plus_web_plugin.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
-import 'package:wakelock_plus_web/wakelock_plus_web.dart';
 
 void main() {
-  group('$WakelockPlusWeb', () {
+  group('$WakelockPlusWebPlugin', () {
     setUpAll(() async {
       // todo: the web tests do not work as the JS library import does not work.
-      WakelockPlusPlatformInterface.instance = WakelockPlusWeb();
+      WakelockPlusPlatformInterface.instance = WakelockPlusWebPlugin();
     });
 
-    test('$WakelockPlusWeb set as default instance', () {
-      expect(WakelockPlusPlatformInterface.instance, isA<WakelockPlusWeb>());
+    test('$WakelockPlusWebPlugin set as default instance', () {
+      expect(WakelockPlusPlatformInterface.instance, isA<WakelockPlusWebPlugin>());
     });
 
     test('initially disabled', () async {

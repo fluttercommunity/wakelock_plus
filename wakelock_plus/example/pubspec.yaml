@@ -93,9 +93,3 @@ dependency_overrides:
   # current platform implementations.
   wakelock_plus_platform_interface:
     path: ../../wakelock_plus_platform_interface
-  wakelock_plus_web:
-    path: ../../wakelock_plus_web
-#  wakelock_plus_windows:
-#    path: ../../wakelock_plus_windows
-#  wakelock_plus_linux:
-#    path: ../../wakelock_plus_linux
