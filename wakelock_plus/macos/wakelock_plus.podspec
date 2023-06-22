@@ -5,16 +5,14 @@
 Pod::Spec.new do |s|
   s.name             = 'wakelock_plus'
   s.version          = '0.0.1'
-  s.summary          = 'No-op implementation of the macos wakelock_plus plugin to avoid build issues on macos'
+  s.summary          = 'Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on Android, iOS, macOS, Windows, and web.'
   s.description      = <<-DESC
-  No-op implementation of the wakelock_plus plugin to avoid build issues on macos.
-  https://github.com/flutter/flutter/issues/46618
+  Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on Android, iOS, macOS, Windows, and web.
                        DESC
   s.homepage         = 'https://github.com/fluttercommunity/wakelock_plus'
-  s.license          = { :file => '../LICENSE' }
+  s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
-
-  s.source           = { :path => '.' }
+  s.source           = { :http => 'https://github.com/fluttercommunity/wakelock_plus/tree/main/packages/wakelock_plus_macos' }
   s.source_files     = 'Classes/**/*'
   s.dependency 'FlutterMacOS'
 

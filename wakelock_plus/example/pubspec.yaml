@@ -91,8 +91,6 @@ dependency_overrides:
   # We override the platform dependencies of wakelock here because we use the example app for
   # integration testing and want to make sure that the CI always runs integration tests using the
   # current platform implementations.
-  wakelock_plus_macos:
-    path: ../../wakelock_plus_macos
   wakelock_plus_platform_interface:
     path: ../../wakelock_plus_platform_interface
   wakelock_plus_web:

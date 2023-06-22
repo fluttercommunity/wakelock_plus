@@ -11,8 +11,13 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 /// instance). We use manual method channel calls instead of `pigeon` for the
 /// moment because macOS support for `pigeon` is not clear yet.
 /// See https://github.com/flutter/flutter/issues/73738.
-class WakelockPlusMacOS extends WakelockPlusPlatformInterface {
+class WakelockPlusMacOSPlugin extends WakelockPlusPlatformInterface {
   static const MethodChannel _channel = MethodChannel('wakelock_plus_macos');
+
+  /// Registers this class as the default instance of [WakelockPlatformInterface].
+  static void registerWith() {
+    WakelockPlusPlatformInterface.instance = WakelockPlusMacOSPlugin();
+  }
 
   @override
   Future<void> toggle({required bool enable}) async {

@@ -4,14 +4,14 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:wakelock_plus/src/wakelock_plus_linux_plugin.dart';
+import 'package:wakelock_plus/src/wakelock_plus_macos_plugin.dart';
 import 'package:wakelock_plus/src/wakelock_plus_windows_plugin.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 // import 'package:wakelock/src/windows_stub.dart'
 // if (dart.library.io) 'package:wakelock_windows/wakelock_windows.dart';
-import 'package:wakelock_plus_macos/wakelock_plus_macos.dart';
-
 export 'src/wakelock_plus_windows_plugin.dart';
 export 'src/wakelock_plus_linux_plugin.dart';
+export 'src/wakelock_plus_macos_plugin.dart';
 
 /// The [WakelockPlusPlatformInterface] that is used by [WakelockPlus].
 ///
@@ -40,7 +40,7 @@ WakelockPlusPlatformInterface get _defaultPlatformInstance {
     // however, it is not yet entirely clear how to integrate with pigeon.
     // This should just work fine and the io reference should be tree shaken
     // on web.
-    return WakelockPlusMacOS();
+    return WakelockPlusMacOSPlugin();
   }
 
   if (Platform.isWindows) {

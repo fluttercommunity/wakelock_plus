@@ -16,9 +16,6 @@ dependencies:
   wakelock_plus_platform_interface:
     # TODO: Publish this first to pub.dev, then point to live version.
     path: "../wakelock_plus_platform_interface"
-  wakelock_plus_macos:
-    # TODO: Publish this first to pub.dev, then point to live version.
-    path: "../wakelock_plus_macos"
   wakelock_plus_web:
     # TODO: Publish this first to pub.dev, then point to live version.
     path: "../wakelock_plus_web"
@@ -62,7 +59,8 @@ flutter:
       windows:
         dartPluginClass: WakelockPlusWindowsPlugin
       macos:
-        default_package: wakelock_plus_macos
+        pluginClass: WakelockPlusMacosPlugin
+        dartPluginClass: WakelockPlusMacOSPlugin
       linux:
         dartPluginClass: WakelockPlusLinuxPlugin
       web:
