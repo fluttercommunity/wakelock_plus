@@ -3,10 +3,15 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:wakelock_plus/src/wakelock_plus_linux_plugin.dart';
+import 'package:wakelock_plus/src/wakelock_plus_windows_plugin.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 // import 'package:wakelock/src/windows_stub.dart'
 // if (dart.library.io) 'package:wakelock_windows/wakelock_windows.dart';
 import 'package:wakelock_plus_macos/wakelock_plus_macos.dart';
+
+export 'src/wakelock_plus_windows_plugin.dart';
+export 'src/wakelock_plus_linux_plugin.dart';
 
 /// The [WakelockPlusPlatformInterface] that is used by [WakelockPlus].
 ///
@@ -38,13 +43,19 @@ WakelockPlusPlatformInterface get _defaultPlatformInstance {
     return WakelockPlusMacOS();
   }
 
-  // TODO: Re-enable once ported over
-  // if (Platform.isWindows) {
-  //   // This does not feel like the correct way to assign the Windows
-  //   // implementation, however, the platform channels do not have to be used
-  //   // thanks to the win32 package. See https://github.com/flutter/flutter/issues/52267.
-  //   return WakelockWindows();
-  // }
+  if (Platform.isWindows) {
+    // This does not feel like the correct way to assign the Windows
+    // implementation, however, the platform channels do not have to be used
+    // thanks to the win32 package. See https://github.com/flutter/flutter/issues/52267.
+    return WakelockPlusWindowsPlugin();
+  }
+
+  if (Platform.isLinux) {
+    // This does not feel like the correct way to assign the Linux
+    // implementation, however, the platform channels do not have to be used
+    // thanks to the dbus package. See https://github.com/flutter/flutter/issues/52267.
+    return WakelockPlusLinuxPlugin();
+  }
 
   return WakelockPlusPlatformInterface.instance;
 }

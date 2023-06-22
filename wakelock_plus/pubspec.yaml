@@ -23,6 +23,14 @@ dependencies:
     # TODO: Publish this first to pub.dev, then point to live version.
     path: "../wakelock_plus_web"
 
+  # Windows dependencies
+  # win32 is compatible across v4 and v5 for Win32 only (not COM)
+  win32: ">=4.0.0 <6.0.0"
+
+  # Linux dependencies
+  dbus: ^0.7.8
+  package_info_plus: ^4.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -51,8 +59,12 @@ flutter:
         pluginClass: WakelockPlusPlugin
       ios:
         pluginClass: WakelockPlusPlugin
+      windows:
+        dartPluginClass: WakelockPlusWindowsPlugin
       macos:
         default_package: wakelock_plus_macos
+      linux:
+        dartPluginClass: WakelockPlusLinuxPlugin
       web:
         default_package: wakelock_plus_web
 
