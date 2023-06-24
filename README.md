@@ -1,5 +1,5 @@
 # Wakelock Plus 
-[![GitHub stars](https://img.shields.io/github/stars/fluttercommunity/wakelock_plus.svg)](https://github.com/fluttercommunity/wakelock_plus) [![Pub version](https://img.shields.io/pub/v/wakelock.svg)](https://pub.dev/packages/wakelock_plus)
+[![GitHub stars](https://img.shields.io/github/stars/fluttercommunity/wakelock_plus.svg)](https://github.com/fluttercommunity/wakelock_plus) [![Pub version](https://img.shields.io/pub/v/wakelock_plus.svg)](https://pub.dev/packages/wakelock_plus)
 
 A continuation of the original Flutter [plugin](https://github.com/creativecreatorormaybenot/wakelock) 
 that allows you to keep the device screen awake, i.e. prevent the screen
