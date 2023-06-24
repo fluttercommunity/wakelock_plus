@@ -29,7 +29,7 @@ dependencies:
 
   # Web dependencies
 
-  js: ^0.6.3
+  js: ^0.6.7
 
 dev_dependencies:
   flutter_test:
