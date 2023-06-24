@@ -7,8 +7,9 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 
 /// The Linux implementation of the [WakelockPlusPlatformInterface].
 ///
-/// This class implements the `wakelock` plugin functionality for Linux using
-/// the `org.freedesktop.ScreenSaver` D-Bus API (see https://specifications.freedesktop.org/idle-inhibit-spec/latest/re01.html).
+/// This class implements the `wakelock_plus` plugin functionality for Linux
+/// using the `org.freedesktop.ScreenSaver` D-Bus API
+/// (see https://specifications.freedesktop.org/idle-inhibit-spec/latest/re01.html).
 class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
   /// Registers this class as the default instance of [WakelockPlatformInterface].
   static void registerWith() {

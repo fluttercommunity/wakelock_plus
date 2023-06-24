@@ -6,8 +6,9 @@ import 'package:win32/win32.dart';
 
 /// The Windows implementation of the [WakelockPlusPlatformInterface].
 ///
-/// This class implements the `wakelock` plugin functionality for Windows using
-/// the `SetThreadExecutionState` win32 API (see https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate).
+/// This class implements the `wakelock_plus` plugin functionality for Windows
+/// using the `SetThreadExecutionState` win32 API
+/// (see https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate).
 class WakelockPlusWindowsPlugin extends WakelockPlusPlatformInterface {
   /// Registers this class as the default instance of [WakelockPlatformInterface].
   static void registerWith() {

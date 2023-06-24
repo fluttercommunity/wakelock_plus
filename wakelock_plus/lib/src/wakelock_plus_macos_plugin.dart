@@ -5,7 +5,7 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 
 /// The macOS implementation of the [WakelockPlusPlatformInterface].
 ///
-/// This class implements the `wakelock` plugin functionality for macOS.
+/// This class implements the `wakelock_plus` plugin functionality for macOS.
 ///
 /// Note that this is *also* a method channel implementation (like the default
 /// instance). We use manual method channel calls instead of `pigeon` for the

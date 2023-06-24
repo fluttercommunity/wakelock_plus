@@ -8,7 +8,7 @@ import 'package:wakelock_plus/src/web_impl/js_wakelock.dart' as wakelock_plus_we
 
 /// The web implementation of the [WakelockPlatformInterface].
 ///
-/// This class implements the `wakelock` plugin functionality for web.
+/// This class implements the `wakelock_plus` plugin functionality for web.
 class WakelockPlusWebPlugin extends WakelockPlusPlatformInterface {
   /// Registers [WakelockPlusWebPlugin] as the default instance of the
   /// [WakelockPlatformInterface].
