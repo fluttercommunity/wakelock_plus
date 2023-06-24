@@ -1,7 +1,7 @@
 name: wakelock_plus
 description: >-2
   Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on
-  Android, iOS, macOS, Windows, and web.
+  Android, iOS, macOS, Windows, Linux, and web.
 version: 1.0.0
 repository: https://github.com/diegotori/wakelock_plus/tree/main/wakelock
 
