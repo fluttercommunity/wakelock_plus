@@ -1,0 +1,105 @@
+name: checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/lib/**'
+      - '**/android/**'
+      - '**/ios/**'
+      - '**/pubspec.yaml'
+      - '**/test/**'
+      - '**/test_driver/**'
+      - '**/assets/**'
+      - '**/integration_test/**'
+      - '.github/workflows/checks.yml'
+
+jobs:
+  analyze:
+    timeout-minutes: 11
+    runs-on: ubuntu-latest
+    name: ${{ matrix.package }} analysis on ${{ matrix.channel }}
+    strategy:
+      matrix:
+        channel:
+          - 'stable'
+          - 'beta'
+        package:
+          - 'wakelock_plus'
+          - 'wakelock_plus_platform_interface'
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.channel }}
+      - run: flutter pub get
+        working-directory: ${{ matrix.package }}
+      - name: Check format
+        working-directory: ${{ matrix.package }}
+        run: dart format . --set-exit-if-changed
+      - run: flutter analyze
+        working-directory: ${{ matrix.package }}
+
+  test:
+    timeout-minutes: 16
+    # Using macOS 13 Ventura due to https://github.com/flutter/flutter/issues/118469
+    runs-on: macos-13
+    name: ${{ matrix.package }} testing on ${{ matrix.channel }} with ${{ matrix.device }}
+    strategy:
+      matrix:
+        device:
+          - 'iPhone 14 Pro Simulator (16.2)'
+          - 'iPhone 14 Pro Max Simulator (16.2)'
+        channel:
+          - 'stable'
+          - 'beta'
+        package:
+          - 'wakelock_plus'
+          - 'wakelock_plus_platform_interface'
+      fail-fast: false
+
+    steps:
+      - name: Start iOS simulator
+        if: matrix.package == 'wakelock_plus'
+        # Using gawk to be able to use my regex to separate the IDs from the device names
+        # (because my awk skills suck) to then pipe that to awk to find the right device.
+        run: |
+          brew install gawk
+          xcrun xctrace list devices
+          UDID=$(
+            xcrun xctrace list devices |
+            gawk 'match($0, /(.+) \(([^.]*)\)/, a) { printf "%s,%s\n", a[1], a[2] }' |
+            awk -F ',' -v 'device=${{ matrix.device }}' '$1 == device { print $2 }'
+          )
+          xcrun simctl boot "${UDID:?simulator not found}"
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.channel }}
+      - run: flutter pub get
+        working-directory: ${{ matrix.package }}
+      - name: Run unit tests (tester)
+        if: matrix.package == 'wakelock_plus'
+        run: flutter test
+        working-directory: ${{ matrix.package }}
+      # For some reason, Web tests are currently not working.
+      # - name: Run unit tests (chrome)
+      #   if: matrix.package == 'wakelock_plus'
+      #   run: |
+      #     flutter config --enable-web
+      #     flutter test --platform chrome
+      #   working-directory: ${{ matrix.package }}
+      - name: Integration tests on iOS
+        if: matrix.package == 'wakelock_plus'
+        run: |
+          cd wakelock_plus/example
+          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_test.dart
+      - name: Integration tests on macOS
+        if: matrix.package == 'wakelock_plus'
+        run: |
+          cd wakelock_plus/example
+          flutter config --enable-macos-desktop
+          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_test.dart -d macos
