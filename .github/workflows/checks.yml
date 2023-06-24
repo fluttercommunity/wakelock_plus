@@ -96,10 +96,10 @@ jobs:
         if: matrix.package == 'wakelock_plus'
         run: |
           cd wakelock_plus/example
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_test.dart
+          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/plugin_integration_test.dart
       - name: Integration tests on macOS
         if: matrix.package == 'wakelock_plus'
         run: |
           cd wakelock_plus/example
           flutter config --enable-macos-desktop
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_test.dart -d macos
+          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/plugin_integration_test.dart -d macos
