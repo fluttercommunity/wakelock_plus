@@ -7,7 +7,7 @@ from sleeping.
 
 ## Supported platforms
 
-| Platform | `wakelock` support |
+| Platform | `wakelock_plus` support |
 |:---------|:------------------:|
 | Android  |         ✅          |
 | iOS      |         ✅          |
