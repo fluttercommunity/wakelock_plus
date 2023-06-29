@@ -2,8 +2,8 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - 'lib/messages.dart'
-    - 'test/messages.dart'
+    - lib/**.g.dart
+    - test/**.g.dart
 
 linter:
   rules:
