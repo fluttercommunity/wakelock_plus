@@ -1,4 +1,4 @@
-group 'dev.fluttercommunity.wakelock_plus'
+group 'dev.fluttercommunity.plus.wakelock'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -27,7 +27,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 33
 
-    namespace 'dev.fluttercommunity.wakelock_plus'
+    namespace 'dev.fluttercommunity.plus.wakelock'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

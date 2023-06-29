@@ -1,4 +1,4 @@
-package dev.fluttercommunity.wakelock_plus
+package dev.fluttercommunity.plus.wakelock
 
 import IsEnabledMessage
 import ToggleMessage

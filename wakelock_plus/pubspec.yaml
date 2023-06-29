@@ -54,7 +54,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: dev.fluttercommunity.wakelock_plus
+        package: dev.fluttercommunity.plus.wakelock
         pluginClass: WakelockPlusPlugin
       ios:
         pluginClass: WakelockPlusPlugin

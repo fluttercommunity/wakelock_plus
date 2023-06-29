@@ -1,4 +1,4 @@
-package dev.fluttercommunity.wakelock_plus_example
+package dev.fluttercommunity.plus.wakelock_example
 
 import io.flutter.embedding.android.FlutterActivity
 
