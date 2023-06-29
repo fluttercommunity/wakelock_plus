@@ -1,10 +1,12 @@
-# wakelock_plus_platform_interface [![Pub version](https://img.shields.io/pub/v/wakelock_plus_platform_interface.svg)](https://pub.dev/packages/wakelock_platform_interface) [![GitHub stars](https://img.shields.io/github/stars/creativecreatorormaybenot/wakelock.svg)](https://github.com/creativecreatorormaybenot/wakelock) [![Twitter Follow](https://img.shields.io/twitter/follow/creativemaybeno?label=Follow&style=social)](https://twitter.com/creativemaybeno)
+# Wakelock Plus Platform Interface
 
-A common platform interface for the [wakelock plus_plugin][wakelock_plus GitHub] used by the different
-platform implementations.
+[![Flutter Community: wakelock_plus_platform_interface](https://fluttercommunity.dev/_github/header/wakelock_plus_platform_interface)](https://github.com/fluttercommunity/community)
 
-The practices for the implementation have been adapted from the [video_player_platform_interface]
-package.
+[![pub package](https://img.shields.io/pub/v/wakelock_plus_platform_interface.svg)](https://pub.dev/packages/wakelock_plus_platform_interface)
 
-[wakelock GitHub]: https://github.com/creativecreatorormaybenot/wakelock
-[video_player_platform_interface]: https://github.com/flutter/plugins/tree/master/packages/video_player/video_player_platform_interface
+A common platform interface for [`wakelock_plus`](https://pub.dev/packages/wakelock_plus).
+
+## Usage
+
+This package is already included as part of the `wakelock_plus` package dependency, and will
+be included when using `wakelock_plus` as normal.
