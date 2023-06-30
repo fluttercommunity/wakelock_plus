@@ -39,11 +39,11 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
     if (enable) {
       _cookie = await _object
           .callMethod(
-        'org.freedesktop.ScreenSaver',
-        'Inhibit',
-        [DBusString(await _appName), const DBusString('wakelock')],
-        replySignature: DBusSignature.uint32,
-      )
+            'org.freedesktop.ScreenSaver',
+            'Inhibit',
+            [DBusString(await _appName), const DBusString('wakelock')],
+            replySignature: DBusSignature.uint32,
+          )
           .then((response) => response.returnValues.single.asUint32());
     } else if (_cookie != null) {
       await _object.callMethod(

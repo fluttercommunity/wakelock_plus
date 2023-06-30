@@ -14,7 +14,6 @@ class WakelockPlusExampleApp extends StatefulWidget {
 
   /// Creates the [WakelockPlusExampleApp] widget.
 
-
   @override
   State<WakelockPlusExampleApp> createState() => _WakelockPlusExampleAppState();
 }

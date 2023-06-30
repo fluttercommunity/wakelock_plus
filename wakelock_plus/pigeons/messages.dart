@@ -19,7 +19,7 @@ class IsEnabledMessage {
     prefix: 'FLT',
   ),
   kotlinOut:
-  'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/Messages.g.kt',
+      'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/Messages.g.kt',
 ))
 @HostApi(dartHostTestHandler: 'TestWakelockPlusApi')
 abstract class WakelockPlusApi {

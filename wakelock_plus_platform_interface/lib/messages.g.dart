@@ -70,9 +70,9 @@ class _WakelockPlusApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return IsEnabledMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return ToggleMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -116,8 +116,7 @@ class WakelockPlusApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.WakelockPlusApi.isEnabled', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

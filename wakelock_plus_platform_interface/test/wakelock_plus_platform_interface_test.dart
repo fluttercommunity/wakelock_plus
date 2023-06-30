@@ -5,7 +5,6 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 
 import 'messages.g.dart';
 
-
 class _ApiLogger implements TestWakelockPlusApi {
   final List<String> log = [];
   late ToggleMessage toggleMessage;
@@ -80,7 +79,8 @@ void main() {
   });
 }
 
-class ImplementsWakelockPlusPlatformInterface implements WakelockPlusPlatformInterface {
+class ImplementsWakelockPlusPlatformInterface
+    implements WakelockPlusPlatformInterface {
   const ImplementsWakelockPlusPlatformInterface(this.mocked);
 
   final bool mocked;

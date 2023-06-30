@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 import 'package:win32/win32.dart';
 
@@ -14,6 +13,7 @@ class WakelockPlusWindowsPlugin extends WakelockPlusPlatformInterface {
   static void registerWith() {
     WakelockPlusPlatformInterface.instance = WakelockPlusWindowsPlugin();
   }
+
   var _enabled = false;
 
   @override

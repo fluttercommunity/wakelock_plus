@@ -4,7 +4,8 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:js/js.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 import 'package:wakelock_plus/src/web_impl/import_js_library.dart';
-import 'package:wakelock_plus/src/web_impl/js_wakelock.dart' as wakelock_plus_web;
+import 'package:wakelock_plus/src/web_impl/js_wakelock.dart'
+    as wakelock_plus_web;
 
 /// The web implementation of the [WakelockPlatformInterface].
 ///

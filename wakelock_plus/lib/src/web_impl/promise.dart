@@ -4,9 +4,6 @@ library firebase.es6_interop;
 import 'package:js/js.dart';
 import 'package:wakelock_plus/src/web_impl/func.dart';
 
-
-
-
 /// JavaScript promise typing.
 @JS('Promise')
 class PromiseJsImpl<T> {
