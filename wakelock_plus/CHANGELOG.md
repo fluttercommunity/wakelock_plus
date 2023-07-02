@@ -1,3 +1,7 @@
+## 1.0.0+3
+
+* `README.md` now attributes the original author of the `wakelock` plugin, which this plugin is based on.
+
 ## 1.0.0+2
 
 * Added another update to `README.md`.
