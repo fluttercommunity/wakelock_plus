@@ -1,6 +1,10 @@
+## 1.0.0+2
+
+* Added another update to `README.md`.
+
 ## 1.0.0+1
 
-* Added update to README.md
+* Added update to `README.md`.
 
 ## 1.0.0
 
