@@ -1,3 +1,4 @@
-## 0.0.1
+## 1.0.0
 
-* TODO: Describe initial release.
+* Initial relase for the continuation of the orginal [wakelock](https://pub.dev/packages/wakelock) Flutter Plugin. 
+
