@@ -7,7 +7,7 @@ repository: >-2
   https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus_platform_interface
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: '>=2.18.0 <4.0.0'
   flutter: ">=2.11.0"
 
 dependencies:
