@@ -23,7 +23,7 @@ jobs:
       matrix:
         package:
           - 'wakelock_plus'
-          - 'wakelock_platform_interface'
+          - 'wakelock_plus_platform_interface'
       fail-fast: false
 
     steps:
