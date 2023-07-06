@@ -1,3 +1,9 @@
+## 1.1.0
+
+* [#2](https://github.com/fluttercommunity/wakelock_plus/pull/2): Downgraded minimum `meta` to version `1.3.0` in order to maintain compatibility with versions of Flutter below `3.10`. 
+  Also downgraded `js` to version `0.6.3` due to the above. Thanks [diegotori](https://github.com/diegotori).
+* **BREAKING CHANGE**: Increased the minimum supported Dart version to `2.18` in order to align it with `wakelock_plus_platform_interface` version `1.1.0`.
+
 ## 1.0.0+3
 
 * `README.md` now attributes the original author of the `wakelock` plugin, which this plugin is based on.
