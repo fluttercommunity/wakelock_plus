@@ -1,3 +1,6 @@
+## 1.1.1
+* [#3](https://github.com/fluttercommunity/wakelock_plus/pull/3): Library is now compatible with Android Gradle Plugin versions below `4.2.0`. Thanks [diegotori](https://github.com/diegotori).
+
 ## 1.1.0
 
 * [#2](https://github.com/fluttercommunity/wakelock_plus/pull/2): Downgraded minimum `meta` to version `1.3.0` in order to maintain compatibility with versions of Flutter below `3.10`. 
