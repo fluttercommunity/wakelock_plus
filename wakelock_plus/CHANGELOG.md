@@ -1,3 +1,6 @@
+## 1.1.2
+* [#10](https://github.com/fluttercommunity/wakelock_plus/pull/10): Allow use of `package_info_plus` version `5.x.x`. Thanks [dkrutskikh](https://github.com/dkrutskikh).
+
 ## 1.1.1
 * [#3](https://github.com/fluttercommunity/wakelock_plus/pull/3): Library is now compatible with Android Gradle Plugin versions below `4.2.0`. Thanks [diegotori](https://github.com/diegotori).
 
