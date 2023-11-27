@@ -1,3 +1,6 @@
+## 1.1.4
+* [#17](https://github.com/fluttercommunity/wakelock_plus/pull/17) Set range for package_info_plus. Thanks [vbuberen](https://github.com/vbuberen).
+
 ## 1.1.3
 * [#13](https://github.com/fluttercommunity/wakelock_plus/pull/13) Revert usage of package_info_plus wide version range. Thanks [vbuberen](https://github.com/vbuberen).
 
