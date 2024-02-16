@@ -1,3 +1,6 @@
+## 1.1.5
+* [#121](https://github.com/fluttercommunity/wakelock_plus/pull/21) js version 0.7.0. Thanks [vbuberen](https://github.com/diegotori).
+
 ## 1.1.4
 * [#17](https://github.com/fluttercommunity/wakelock_plus/pull/17) Set range for package_info_plus. Thanks [vbuberen](https://github.com/vbuberen).
 
