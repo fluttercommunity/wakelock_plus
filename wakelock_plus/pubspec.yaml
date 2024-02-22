@@ -99,4 +99,5 @@ flutter:
   # https://flutter.dev/custom-fonts/#from-packages
 
   assets:
-    - assets/no_sleep.js
+    - lib/assets/no_sleep.js
+    - packages/wakelock_plus/assets/no_sleep.js
