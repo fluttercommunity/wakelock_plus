@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 /// This is an implementation of the `import_js_library` plugin that is used
 /// until that plugin is migrated to null safety.
@@ -6,24 +7,29 @@ import 'dart:html' as html;
 
 /// Imports a JS script file from the given [url] given the relative
 /// [flutterPluginName].
-void importJsLibrary({required String url, String? flutterPluginName}) {
+///
+/// Returns a Future that resolves when the library is loaded.
+Future<void> importJsLibrary({required String url, String? flutterPluginName}) {
   if (flutterPluginName == null) {
-    _importJSLibraries([url]);
-  } else {
-    _importJSLibraries([_libraryUrl(url, flutterPluginName)]);
+    return _importJSLibraries([url]);
   }
+  return _importJSLibraries([_libraryUrl(url, flutterPluginName)]);
 }
 
 String _libraryUrl(String url, String pluginName) {
-  if (url.startsWith('./')) {
-    url = url.replaceFirst('./', '');
-    return './assets/packages/$pluginName/$url';
-  }
-  if (url.startsWith('assets/')) {
-    return './assets/packages/$pluginName/$url';
-  } else {
-    return url;
-  }
+  return ui_web.assetManager.getAssetUrl(url);
+  //
+  //   TODO: Fix this properly!
+  //
+  // if (url.startsWith('./')) {
+  //   url = url.replaceFirst('./', '');
+  //   return './assets/packages/$pluginName/$url';
+  // }
+  // if (url.startsWith('assets/')) {
+  //   return './assets/packages/$pluginName/$url';
+  // } else {
+  //   return url;
+  // }
 }
 
 html.ScriptElement _createScriptTag(String library) {
@@ -46,6 +52,14 @@ Future<void> _importJSLibraries(List<String> libraries) {
       final scriptTag = _createScriptTag(library);
       head!.children.add(scriptTag);
       loading.add(scriptTag.onLoad.first);
+      // Recommended: add an onError listener to know that something
+      // went wrong here, rather than swallowing the problem.
+      scriptTag.onError.listen((html.Event e) {
+        final String src = (e.target as html.ScriptElement).src;
+        loading.add(Future.error(
+          Exception('Error loading: $src')
+        ));
+      });
     }
   }
 
