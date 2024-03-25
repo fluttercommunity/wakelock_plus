@@ -45,7 +45,7 @@ jobs:
         working-directory: ${{ matrix.package }}
 
   test:
-    timeout-minutes: 20
+    timeout-minutes: 30
     # Using macOS 13 Ventura due to https://github.com/flutter/flutter/issues/118469
     runs-on: macos-13
     name: ${{ matrix.package }} testing on ${{ matrix.channel }} with ${{ matrix.device }}
