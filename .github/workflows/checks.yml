@@ -68,6 +68,9 @@ jobs:
         # Using gawk to be able to use my regex to separate the IDs from the device names
         # (because my awk skills suck) to then pipe that to awk to find the right device.
         run: |
+          # Work around an upstream issue with the runner image:
+          # https://github.com/actions/runner-images/issues/8500
+          brew upgrade || brew link --overwrite python@3.12
           brew install gawk
           xcrun xctrace list devices
           UDID=$(
