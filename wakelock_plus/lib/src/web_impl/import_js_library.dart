@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 /// This is an implementation of the `import_js_library` plugin that is used
 /// until that plugin is migrated to null safety.
@@ -15,12 +16,12 @@ void importJsLibrary({required String url, String? flutterPluginName}) {
 }
 
 String _libraryUrl(String url, String pluginName) {
-  if (url.startsWith('./')) {
-    url = url.replaceFirst('./', '');
-    return './assets/packages/$pluginName/$url';
-  }
-  if (url.startsWith('assets/')) {
-    return './assets/packages/$pluginName/$url';
+  if (url.startsWith('./') || url.startsWith('assets/')) {
+    if (url.startsWith('./')) {
+      // Remove the current directory from the URL
+      url = url.replaceFirst('./', '');
+    }
+    return ui_web.assetManager.getAssetUrl('packages/$pluginName/$url');
   } else {
     return url;
   }
