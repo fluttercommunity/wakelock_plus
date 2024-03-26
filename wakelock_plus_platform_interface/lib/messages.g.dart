@@ -15,7 +15,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -87,9 +88,9 @@ class _WakelockPlusApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return IsEnabledMessage.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return ToggleMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -105,11 +106,14 @@ class WakelockPlusApi {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _WakelockPlusApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _WakelockPlusApiCodec();
 
   Future<void> toggle(ToggleMessage msg) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -130,8 +134,10 @@ class WakelockPlusApi {
   }
 
   Future<IsEnabledMessage> isEnabled() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
