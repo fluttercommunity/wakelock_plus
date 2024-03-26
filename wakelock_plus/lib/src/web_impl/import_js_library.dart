@@ -1,4 +1,6 @@
-import 'dart:html' as html;
+import 'dart:js_interop';
+
+import 'package:web/web.dart';
 
 /// This is an implementation of the `import_js_library` plugin that is used
 /// until that plugin is migrated to null safety.
@@ -6,11 +8,12 @@ import 'dart:html' as html;
 
 /// Imports a JS script file from the given [url] given the relative
 /// [flutterPluginName].
-void importJsLibrary({required String url, String? flutterPluginName}) {
+Future<void> importJsLibrary(
+    {required String url, String? flutterPluginName}) async {
   if (flutterPluginName == null) {
-    _importJSLibraries([url]);
+    return _importJSLibraries([url]);
   } else {
-    _importJSLibraries([_libraryUrl(url, flutterPluginName)]);
+    return _importJSLibraries([_libraryUrl(url, flutterPluginName)]);
   }
 }
 
@@ -26,8 +29,8 @@ String _libraryUrl(String url, String pluginName) {
   }
 }
 
-html.ScriptElement _createScriptTag(String library) {
-  final script = html.ScriptElement()
+HTMLScriptElement _createScriptTag(String library) {
+  final script = document.createElement('script') as HTMLScriptElement
     ..type = 'text/javascript'
     ..charset = 'utf-8'
     ..async = true
@@ -39,12 +42,12 @@ html.ScriptElement _createScriptTag(String library) {
 /// Future that resolves when all load.
 Future<void> _importJSLibraries(List<String> libraries) {
   final loading = <Future<void>>[];
-  final head = html.querySelector('head');
+  final head = document.head;
 
   for (final library in libraries) {
     if (!_isImported(library)) {
       final scriptTag = _createScriptTag(library);
-      head!.children.add(scriptTag);
+      head!.appendChild(scriptTag);
       loading.add(scriptTag.onLoad.first);
     }
   }
@@ -53,17 +56,18 @@ Future<void> _importJSLibraries(List<String> libraries) {
 }
 
 bool _isImported(String url) {
-  final head = html.querySelector('head')!;
+  final head = document.head!;
   return _isLoaded(head, url);
 }
 
-bool _isLoaded(html.Element head, String url) {
+bool _isLoaded(HTMLHeadElement head, String url) {
   if (url.startsWith('./')) {
     url = url.replaceFirst('./', '');
   }
-  for (var element in head.children) {
-    if (element is html.ScriptElement) {
-      if (element.src.endsWith(url)) {
+  for (int i = 0; i < head.children.length; i++) {
+    final element = head.children.item(i)!;
+    if (element.instanceOfString('HTMLScriptElement')) {
+      if ((element as HTMLScriptElement).src.endsWith(url)) {
         return true;
       }
     }
