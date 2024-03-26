@@ -23,7 +23,7 @@ dependencies:
 
   # Linux dependencies
   dbus: ^0.7.8
-  package_info_plus: ">=4.0.2 <6.0.0"
+  package_info_plus: ">=4.0.2 <7.0.0"
 
   # Web dependencies
   js: ^0.6.3
