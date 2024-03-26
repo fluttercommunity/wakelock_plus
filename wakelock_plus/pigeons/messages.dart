@@ -18,6 +18,7 @@ class IsEnabledMessage {
   objcOptions: ObjcOptions(
     prefix: 'FLT',
   ),
+  kotlinOptions: KotlinOptions(errorClassName: "WakelockPlusFlutterError"),
   kotlinOut:
       'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/Messages.g.kt',
 ))
