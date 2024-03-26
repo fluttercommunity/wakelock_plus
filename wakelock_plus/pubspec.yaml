@@ -6,8 +6,8 @@ version: 1.1.6
 repository: https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
-  flutter: ">=3.3.0"
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -26,7 +26,7 @@ dependencies:
   package_info_plus: ">=4.0.2 <7.0.0"
 
   # Web dependencies
-  js: ^0.6.3
+  web: ^0.5.0
 
 dev_dependencies:
   flutter_test:

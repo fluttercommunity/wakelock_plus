@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:js/js.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 import 'package:wakelock_plus/src/web_impl/import_js_library.dart';
 import 'package:wakelock_plus/src/web_impl/js_wakelock.dart'
@@ -16,32 +16,39 @@ class WakelockPlusWebPlugin extends WakelockPlusPlatformInterface {
   static void registerWith(Registrar registrar) {
     // Import a version of `NoSleep.js` that was adjusted for the wakelock
     // plugin.
-    importJsLibrary(
+    _jsLoaded = importJsLibrary(
         url: 'assets/no_sleep.js', flutterPluginName: 'wakelock_plus');
 
     WakelockPlusPlatformInterface.instance = WakelockPlusWebPlugin();
   }
 
+  // The future that resolves when the JS library is loaded.
+  static late Future<void> _jsLoaded;
+
   @override
   Future<void> toggle({required bool enable}) async {
+    // Make sure the JS library is loaded before calling it.
+    await _jsLoaded;
+
     wakelock_plus_web.toggle(enable);
   }
 
   @override
   Future<bool> get enabled async {
+    // Make sure the JS library is loaded before calling it.
+    await _jsLoaded;
+
     final completer = Completer<bool>();
 
-    wakelock_plus_web.enabled().then(
+    wakelock_plus_web.enabled().toDart.then(
       // onResolve
-      allowInterop((value) {
-        assert(value is bool);
-
-        completer.complete(value);
-      }),
+      (value) {
+        completer.complete(value.toDart);
+      },
       // onReject
-      allowInterop((error) {
+      onError: (error) {
         completer.completeError(error);
-      }),
+      },
     );
 
     return completer.future;
