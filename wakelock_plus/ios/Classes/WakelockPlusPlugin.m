@@ -11,7 +11,7 @@
 @implementation WakelockPlusPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   WakelockPlusPlugin* instance = [[WakelockPlusPlugin alloc] init];
-  FLTWakelockPlusApiSetup(registrar.messenger, instance);
+  SetUpFLTWakelockPlusApi(registrar.messenger, instance);
 }
 
 - (void)toggleMsg:(FLTToggleMessage*)input error:(FlutterError**)error {
