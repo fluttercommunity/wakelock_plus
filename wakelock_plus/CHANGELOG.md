@@ -1,3 +1,6 @@
+## 1.2.1
+* Emergency hotfix by upgrading `wakelock_plus_platform_interface` to version `1.2.0`.
+
 ## 1.2.0
 * [#26](https://github.com/fluttercommunity/wakelock_plus/pull/26) Update web implementation to depend on Dart 3.3 JS interop + the recommended web package. Thanks [davidmartos96](https://github.com/davidmartos96).
 * [#33](https://github.com/fluttercommunity/wakelock_plus/pull/33) Upgraded package_info_plus to version 6.0.0. Thanks [diegotori](https://github.com/diegotori).
