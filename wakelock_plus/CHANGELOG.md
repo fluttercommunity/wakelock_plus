@@ -1,3 +1,13 @@
+## 1.2.0
+* [#26](https://github.com/fluttercommunity/wakelock_plus/pull/26) Update web implementation to depend on Dart 3.3 JS interop + the recommended web package. Thanks [davidmartos96](https://github.com/davidmartos96).
+* [#33](https://github.com/fluttercommunity/wakelock_plus/pull/33) Upgraded package_info_plus to version 6.0.0. Thanks [diegotori](https://github.com/diegotori).
+* [#34](https://github.com/fluttercommunity/wakelock_plus/pull/34) Migrate to gradle 8.0. Thanks [hasanm08](https://github.com/hasanm08).
+* [#35](https://github.com/fluttercommunity/wakelock_plus/pull/35) Issue #18. Thanks [diegotori](https://github.com/diegotori).
+* **BREAKING CHANGES**:
+  * Library now requires Dart version `3.3` or higher.
+  * Library now requires Flutter version `3.19` or higher.
+  * Library now requires Java 17 or higher and your app must build on API 34 (14 Upside Down Cake) on Android.
+
 ## 1.1.6
 * [#23](https://github.com/fluttercommunity/wakelock_plus/pull/23) fix: privacy manifest. Thanks [SputNikPlop](https://github.com/SputNikPlop).
 
