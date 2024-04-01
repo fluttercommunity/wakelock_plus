@@ -42,7 +42,16 @@ class WakelockPlusPlugin: FlutterPlugin, WakelockPlusApi, ActivityAware {
     wakelock!!.toggle(msg)
   }
 
+  override fun toggleCPU(msg: ToggleMessage) {
+    wakelock!!.toggleCPU(msg)
+  }
+
   override fun isEnabled(): IsEnabledMessage {
     return wakelock!!.isEnabled()
   }
+
+  override fun isCPUEnabled(): IsEnabledMessage {
+    return wakelock!!.isCPUEnabled()
+  }
+  
 }

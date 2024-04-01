@@ -43,9 +43,19 @@ abstract class WakelockPlusPlatformInterface extends PlatformInterface {
     throw UnimplementedError('toggle() has not been implemented.');
   }
 
+  /// Toggles the CPU wakelock based on the given [enable] value.
+  Future<void> toggleCPU({required bool enable}) {
+    throw UnimplementedError('toggleCPU() has not been implemented.');
+  }
+
   /// Returns whether the wakelock is enabled or not.
   Future<bool> get enabled {
     throw UnimplementedError('isEnabled has not been implemented.');
+  }
+
+  /// Returns whether the CPU wakelock is enabled or not.
+  Future<bool> get enabledCPU {
+    throw UnimplementedError('isEnabledCPU has not been implemented.');
   }
 
   // This method makes sure that VideoPlayer isn't implemented with `implements`.

@@ -156,6 +156,25 @@ void SetUpFLTWakelockPlusApi(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU"
+        binaryMessenger:binaryMessenger
+        codec:FLTWakelockPlusApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(toggleCPUMsg:error:)], @"FLTWakelockPlusApi api (%@) doesn't respond to @selector(toggleCPUMsg:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        FLTToggleMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api toggleCPUMsg:arg_msg error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
         initWithName:@"dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled"
         binaryMessenger:binaryMessenger
         codec:FLTWakelockPlusApiGetCodec()];
@@ -164,6 +183,23 @@ void SetUpFLTWakelockPlusApi(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         FLTIsEnabledMessage *output = [api isEnabledWithError:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isCPUEnabled"
+        binaryMessenger:binaryMessenger
+        codec:FLTWakelockPlusApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(isCPUEnabledWithError:)], @"FLTWakelockPlusApi api (%@) doesn't respond to @selector(isCPUEnabledWithError:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        FLTIsEnabledMessage *output = [api isCPUEnabledWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {

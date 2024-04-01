@@ -7,10 +7,14 @@ import android.view.WindowManager
 
 internal class Wakelock {
   var activity: Activity? = null
+  val cpuWakeLock: PowerManager.WakeLock? = null
 
   private val enabled
     get() = activity!!.window.attributes.flags and
         WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON != 0
+
+  private val cpuEnabled
+    get() = cpuWakeLock?.isHeld ?: false
 
   fun toggle(message: ToggleMessage) {
     if (activity == null) {
@@ -27,6 +31,28 @@ internal class Wakelock {
     }
   }
 
+  fun toggleCPU(message: ToggleMessage) {
+    if (activity == null) {
+      throw NoActivityException()
+    }
+
+    val activity = this.activity!!
+    val enabled = this.cpuEnabled
+
+    if (message.enable!!) {
+      if (!enabled) {
+        cpuWakeLock =
+        (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vibration::KeepVibratingWakeLog").apply {
+                acquire()
+            }
+        }
+      }
+    } else if (enabled) {
+      wakelock?.release()
+    }
+  }
+
   fun isEnabled(): IsEnabledMessage {
     if (activity == null) {
       throw NoActivityException()
@@ -34,6 +60,11 @@ internal class Wakelock {
 
     return IsEnabledMessage(enabled = enabled)
   }
+
+  fun isCPUEnabled(): IsEnabledMessage {
+    return IsEnabledMessage(enabled = cpuEnabled)
+  }
+
 }
 
 class NoActivityException : Exception("wakelock requires a foreground activity")

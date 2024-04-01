@@ -88,9 +88,9 @@ class _WakelockPlusApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return IsEnabledMessage.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return ToggleMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -109,20 +109,35 @@ class WakelockPlusApi {
   static const MessageCodec<Object?> pigeonChannelCodec =
       _WakelockPlusApiCodec();
 
-  Future<void> toggle(ToggleMessage msg) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
-    );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[msg]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
+  Future<void> toggle(ToggleMessage arg_msg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_msg]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> toggleCPU(ToggleMessage arg_msg) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_msg]) as List<Object?>?;
+    if (replyList == null) {
       throw PlatformException(
         code: __pigeon_replyList[0]! as String,
         message: __pigeon_replyList[1] as String?,
@@ -134,6 +149,7 @@ class WakelockPlusApi {
   }
 
   Future<IsEnabledMessage> isEnabled() async {
+<<<<<<< HEAD
     const String __pigeon_channelName =
         'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -147,6 +163,41 @@ class WakelockPlusApi {
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
+=======
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as IsEnabledMessage?)!;
+    }
+  }
+
+  Future<IsEnabledMessage> isCPUEnabled() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isCPUEnabled', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+>>>>>>> c0d2bef (added preliminary cpu wakelock)
       throw PlatformException(
         code: __pigeon_replyList[0]! as String,
         message: __pigeon_replyList[1] as String?,

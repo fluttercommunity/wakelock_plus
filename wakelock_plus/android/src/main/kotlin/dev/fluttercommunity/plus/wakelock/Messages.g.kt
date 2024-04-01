@@ -122,7 +122,9 @@ private object WakelockPlusApiCodec : StandardMessageCodec() {
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface WakelockPlusApi {
   fun toggle(msg: ToggleMessage)
+  fun toggleCPU(msg: ToggleMessage)
   fun isEnabled(): IsEnabledMessage
+  fun isCPUEnabled(): IsEnabledMessage
 
   companion object {
     /** The codec used by WakelockPlusApi. */
@@ -152,12 +154,47 @@ interface WakelockPlusApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val msgArg = args[0] as ToggleMessage
+            var wrapped: List<Any?>
+            try {
+              api.toggleCPU(msgArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.isEnabled())
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isCPUEnabled", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.isCPUEnabled())
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }

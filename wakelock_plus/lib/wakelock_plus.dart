@@ -40,6 +40,17 @@ class WakelockPlus {
   /// * [toggle], which allows to enable or disable using a [bool] parameter.
   static Future<void> enable() => toggle(enable: true);
 
+  /// Enables the CPU-wakelock.
+  /// CURRENTLY ONLY AVAILABLE ON ANDROID
+  ///
+  /// This can simply be called using `WakelockPlus.enableCPU()` and does not return
+  /// anything.
+  /// You can await the [Future] to wait for the operation to complete.
+  ///
+  /// See also:
+  /// * [toggleCPU], which allows to enable or disable using a [bool] parameter.
+  static Future<void> enableCPU() => toggleCPU(enable: true);
+
   /// Disables the wakelock.
   ///
   /// This can simply be called using `WakelockPlus.disable()` and does not return
@@ -49,6 +60,18 @@ class WakelockPlus {
   /// See also:
   /// * [toggle], which allows to enable or disable using a [bool] parameter.
   static Future<void> disable() => toggle(enable: false);
+
+  /// Disables the CPU-wakelock.
+  /// CURRENTLY ONLY AVAILABLE ON ANDROID
+  ///
+  /// This can simply be called using `WakelockPlus.disableCPU()` and does not return
+  /// anything.
+  /// You can await the [Future] to wait for the operation to complete.
+  ///
+  /// See also:
+  /// * [toggleCPU], which allows to enable or disable using a [bool] parameter.
+  static Future<void> disableCPU() => toggleCPU(enable: false);
+
 
   /// Toggles the wakelock on or off.
   ///
@@ -71,6 +94,28 @@ class WakelockPlus {
     return wakelockPlusPlatformInstance.toggle(enable: enable);
   }
 
+  /// Toggles the CPU-wakelock on or off.
+  /// CURRENTLY ONLY AVAILABLE ON ANDROID
+  ///
+  /// You can simply use this function to toggle the CPU-wakelock using a [bool]
+  /// value (for the [enable] parameter).
+  ///
+  /// ```dart
+  /// // This line keeps the CPU on.
+  /// WakelockPlus.toggleCPU(enable: true);
+  ///
+  /// bool enableWakelock = false;
+  /// // The following line disables the WakelockPlus.
+  /// WakelockPlus.toggleCPU(enable: enableWakelock);
+  /// ```
+  ///
+  /// You can await the [Future] to wait for the operation to complete.
+  static Future<void> toggleCPU({
+    required bool enable,
+  }) {
+    return wakelockPlusPlatformInstance.toggleCPU(enable: enable);
+  }
+
   /// Returns whether the wakelock is currently enabled or not.
   ///
   /// If you want to retrieve the current wakelock status, you will have to call
@@ -80,4 +125,16 @@ class WakelockPlus {
   /// bool wakelockEnabled = await WakelockPlus.enabled;
   /// ```
   static Future<bool> get enabled => wakelockPlusPlatformInstance.enabled;
+
+  /// Returns whether the CPU-wakelock is currently enabled or not.
+  /// CURRENTLY ONLY AVAILABLE ON ANDROID
+  ///
+  /// If you want to retrieve the current CPU-wakelock status, you will have to call
+  /// [WakelockPlus.enabledCPU] and await its result:
+  ///
+  /// ```dart
+  /// bool wakelockEnabled = await WakelockPlus.enabledCPU;
+  /// ```
+  static Future<bool> get enabledCPU => wakelockPlusPlatformInstance.enabledCPU;
+
 }

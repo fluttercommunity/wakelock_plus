@@ -30,8 +30,11 @@ NSObject<FlutterMessageCodec> *FLTWakelockPlusApiGetCodec(void);
 
 @protocol FLTWakelockPlusApi
 - (void)toggleMsg:(FLTToggleMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)toggleCPUMsg:(FLTToggleMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FLTIsEnabledMessage *)isEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable FLTIsEnabledMessage *)isCPUEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFLTWakelockPlusApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTWakelockPlusApi> *_Nullable api);

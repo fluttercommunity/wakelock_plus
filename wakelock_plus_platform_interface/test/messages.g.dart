@@ -28,9 +28,9 @@ class _TestWakelockPlusApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return IsEnabledMessage.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return ToggleMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -39,70 +39,81 @@ class _TestWakelockPlusApiCodec extends StandardMessageCodec {
 }
 
 abstract class TestWakelockPlusApi {
-  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
-      TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _TestWakelockPlusApiCodec();
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = _TestWakelockPlusApiCodec();
 
   void toggle(ToggleMessage msg);
 
+  void toggleCPU(ToggleMessage msg);
+
   IsEnabledMessage isEnabled();
 
-  static void setup(TestWakelockPlusApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  IsEnabledMessage isCPUEnabled();
+
+  static void setup(TestWakelockPlusApi? api, {BinaryMessenger? binaryMessenger}) {
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle was null.');
+          'Argument for dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final ToggleMessage? arg_msg = (args[0] as ToggleMessage?);
           assert(arg_msg != null,
               'Argument for dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle was null, expected non-null ToggleMessage.');
-          try {
-            api.toggle(arg_msg!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
+          api.toggle(arg_msg!);
+          return <Object?>[];
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
-                (Object? message) async {
-          try {
-            final IsEnabledMessage output = api.isEnabled();
-            return <Object?>[output];
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final ToggleMessage? arg_msg = (args[0] as ToggleMessage?);
+          assert(arg_msg != null,
+              'Argument for dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggleCPU was null, expected non-null ToggleMessage.');
+          api.toggleCPU(arg_msg!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          // ignore message
+          final IsEnabledMessage output = api.isEnabled();
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isCPUEnabled', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          // ignore message
+          final IsEnabledMessage output = api.isCPUEnabled();
+          return <Object?>[output];
         });
       }
     }
