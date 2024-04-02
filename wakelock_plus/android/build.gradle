@@ -1,7 +1,19 @@
 group 'dev.fluttercommunity.plus.wakelock'
 version '1.0-SNAPSHOT'
 
-allprojects {
+buildscript {
+    ext.kotlin_version = '1.7.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.1'
+    }
+}
+
+rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
@@ -38,7 +50,7 @@ android {
     }
 
     dependencies {
-        implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.23'
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
     }
