@@ -1,3 +1,7 @@
+## 1.2.2
+* [#40](https://github.com/fluttercommunity/wakelock_plus/pull/40) Android Gradle 8.x upgrade fixes. Thanks [diegotori](https://github.com/diegotori).
+* [#41](https://github.com/fluttercommunity/wakelock_plus/pull/41) Fix: dependency minimums adjustments. Thanks [diegotori](https://github.com/diegotori).
+
 ## 1.2.1
 * Emergency hotfix by upgrading `wakelock_plus_platform_interface` to version `1.2.0`.
 
