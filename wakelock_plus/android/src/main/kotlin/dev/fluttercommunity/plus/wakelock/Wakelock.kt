@@ -4,10 +4,13 @@ import IsEnabledMessage
 import ToggleMessage
 import android.app.Activity
 import android.view.WindowManager
+import android.os.PowerManager
+import android.content.Context
+
 
 internal class Wakelock {
   var activity: Activity? = null
-  val cpuWakeLock: PowerManager.WakeLock? = null
+  var cpuWakeLock: PowerManager.WakeLock? = null
 
   private val enabled
     get() = activity!!.window.attributes.flags and
@@ -42,14 +45,14 @@ internal class Wakelock {
     if (message.enable!!) {
       if (!enabled) {
         cpuWakeLock =
-        (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+        (activity?.getSystemService(Context.POWER_SERVICE) as PowerManager).run {
             newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Vibration::KeepVibratingWakeLog").apply {
                 acquire()
             }
         }
       }
     } else if (enabled) {
-      wakelock?.release()
+      cpuWakeLock?.release()
     }
   }
 
