@@ -5,10 +5,22 @@
 [![Pub version](https://img.shields.io/pub/v/wakelock_plus.svg)](https://pub.dev/packages/wakelock_plus) [![GitHub stars](https://img.shields.io/github/stars/fluttercommunity/wakelock_plus.svg)](https://github.com/fluttercommunity/wakelock_plus)  
 A continuation of the original [wakelock](https://github.com/creativecreatorormaybenot/wakelock) Flutter Plugin written by [creativecreatorormaybenot](https://github.com/creativecreatorormaybenot) that allows you to keep the device screen awake, i.e. prevent the screen from sleeping.
 
----
-
 You can enable and toggle the screen wakelock, which prevents the screen from turning off 
 automatically.
+
+---
+
+## Table of Contents
+1. [Supported Platforms](#supported-platforms)
+2. [Usage](#usage)
+   1. [Implementation](#implementation)
+   2. [Ensure the `WidgetsBinding` is initialized](#ensure-the-widgetsbinding-is-initialized)
+   3. [Calling `WakelockPlus.enable()` in `main()`](#calling-wakelockplusenable-in-main)
+3. [Platform Specific Integration Instructions](#platform-specific-integration-instructions)
+   1. [Android](#android)
+4. [Learn More](#learn-more)
+
+---
 
 ## Supported Platforms
 
@@ -111,6 +123,28 @@ The most important factors are:
 This is why you should instead prefer to enable the wakelock whenever components inside of your app
 that require the screen to stay on are active. This can e.g. happen in the `build` method of your
 widget.
+
+## Platform Specific Integration Instructions
+
+### Android
+
+When building your app on Android and using this library, you may be prompted by the following:
+
+```bash
+One or more plugins require a higher Android NDK version.
+```
+
+If this occurs, simply add the NDK version specified in the error message in your `app` module's 
+`build.gradle` file's `android` closure. For example:
+
+```gradle
+android {
+    // Current version at the time of this writing.
+    // Use the version specified by the error message.
+    ndkVersion "25.1.8937393" 
+    //....
+}
+```
 
 ## Learn more
 

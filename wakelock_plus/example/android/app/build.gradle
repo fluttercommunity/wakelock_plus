@@ -22,9 +22,9 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'dev.fluttercommunity.plus.wakelock_example'
     compileSdk 34
-    ndkVersion '25.1.8937393'
+    ndkVersion "25.1.8937393"
+    namespace 'dev.fluttercommunity.plus.wakelock_example'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
