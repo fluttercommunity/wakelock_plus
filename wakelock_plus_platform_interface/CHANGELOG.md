@@ -1,3 +1,6 @@
+## 1.2.1
+* [#41](https://github.com/fluttercommunity/wakelock_plus/pull/41): Fix: dependency minimums adjustments. Thanks [diegotori](https://github.com/diegotori).
+
 ## 1.2.0
 
 * **BREAKING CHANGES**:
