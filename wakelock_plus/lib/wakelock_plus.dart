@@ -4,7 +4,7 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 export 'src/wakelock_plus_linux_plugin.dart';
 export 'src/wakelock_plus_macos_plugin.dart';
 export 'src/wakelock_plus_windows_plugin.dart'
-    if (dart.library.html) 'src/wakelock_plus_web_plugin.dart';
+    if (dart.library.js_interop) 'src/wakelock_plus_web_plugin.dart';
 
 /// The [WakelockPlusPlatformInterface] that is used by [WakelockPlus].
 ///
