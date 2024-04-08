@@ -1,3 +1,6 @@
+## 1.2.3
+* [#44](https://github.com/fluttercommunity/wakelock_plus/pull/44) fix(wakelock_plus): WASM-compatible conditional imports. Thanks [IchordeDionysos](https://github.com/IchordeDionysos).
+
 ## 1.2.2
 * [#40](https://github.com/fluttercommunity/wakelock_plus/pull/40) Android Gradle 8.x upgrade fixes. Thanks [diegotori](https://github.com/diegotori).
 * [#41](https://github.com/fluttercommunity/wakelock_plus/pull/41) Fix: dependency minimums adjustments. Thanks [diegotori](https://github.com/diegotori).
