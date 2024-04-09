@@ -1,3 +1,6 @@
+## 1.2.4
+* [#46](https://github.com/fluttercommunity/wakelock_plus/pull/46) Chore: package_info_plus range upgrade. Thanks [diegotori](https://github.com/diegotori).
+
 ## 1.2.3
 * [#44](https://github.com/fluttercommunity/wakelock_plus/pull/44) fix(wakelock_plus): WASM-compatible conditional imports. Thanks [IchordeDionysos](https://github.com/IchordeDionysos).
 
