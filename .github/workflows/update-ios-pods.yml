@@ -1,0 +1,36 @@
+name: Update iOS CocoaPods
+on:
+  workflow_dispatch:
+jobs:
+  update-pods:
+    runs-on: macos-latest
+    name: pod update
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+      - name: Get Flutter dependencies
+        working-directory: wakelock_plus/example/ios
+        run: flutter pub get
+      - name: Update CocoaPods
+        working-directory: wakelock_plus/example/ios
+        run: |
+          pod repo update && \
+          pod update
+      - name: Check difference
+        run: |
+          git add --all . && \
+          status=$(git status -s .) && \
+          echo $status && \
+          echo "GIT_STATUS=${status//$'\n'/\\n}" >> $GITHUB_ENV
+      - name: Push changes
+        if: "contains(env.GIT_STATUS, 'ios')"
+        run: |
+          git add --all . && \
+          git config --global user.email "action@github.com" && \
+          git config --global user.name "Github CI" && \
+          git commit -a -m "pod update" && \
+          git push
