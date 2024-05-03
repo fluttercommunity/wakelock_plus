@@ -1,3 +1,6 @@
+## 1.2.5
+* [#52](https://github.com/fluttercommunity/wakelock_plus/pull/52) chore: loosen dependency constraint to support package_info_plus v8 and v9. Thanks [josxha](https://github.com/josxha).
+
 ## 1.2.4
 * [#46](https://github.com/fluttercommunity/wakelock_plus/pull/46) Chore: package_info_plus range upgrade. Thanks [diegotori](https://github.com/diegotori).
 
