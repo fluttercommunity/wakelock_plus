@@ -1,3 +1,6 @@
+## 1.2.6
+* [#66](https://github.com/fluttercommunity/wakelock_plus/pull/66) Added conditional export of all 'io' implementations. Thanks [uldall](https://github.com/uldall).
+
 ## 1.2.5
 * [#52](https://github.com/fluttercommunity/wakelock_plus/pull/52) chore: loosen dependency constraint to support package_info_plus v8 and v9. Thanks [josxha](https://github.com/josxha).
 
