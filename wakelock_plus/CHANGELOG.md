@@ -1,3 +1,6 @@
+## 1.2.7
+* [#64](https://github.com/fluttercommunity/wakelock_plus/pull/64) chore: rename messages_gKt. Thanks [defuncart](https://github.com/defuncart).
+
 ## 1.2.6
 * [#66](https://github.com/fluttercommunity/wakelock_plus/pull/66) Added conditional export of all 'io' implementations. Thanks [uldall](https://github.com/uldall).
 
