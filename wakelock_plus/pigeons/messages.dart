@@ -20,7 +20,7 @@ class IsEnabledMessage {
   ),
   kotlinOptions: KotlinOptions(errorClassName: "WakelockPlusFlutterError"),
   kotlinOut:
-      'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/Messages.g.kt',
+      'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt',
 ))
 @HostApi(dartHostTestHandler: 'TestWakelockPlusApi')
 abstract class WakelockPlusApi {
