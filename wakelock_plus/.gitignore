@@ -30,6 +30,8 @@
 .pub-cache/
 .pub/
 build/
+.build/
+.swiftpm/
 pubspec.lock
 
 # Android related
