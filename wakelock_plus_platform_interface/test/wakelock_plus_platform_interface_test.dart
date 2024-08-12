@@ -54,7 +54,7 @@ void main() {
 
     setUpAll(() {
       logger = _ApiLogger();
-      TestWakelockPlusApi.setup(logger);
+      TestWakelockPlusApi.setUp(logger);
     });
 
     test('toggle', () async {
