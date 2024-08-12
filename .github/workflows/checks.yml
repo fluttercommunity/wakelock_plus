@@ -32,7 +32,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.channel }}
@@ -79,7 +79,7 @@ jobs:
             awk -F ',' -v 'device=${{ matrix.device }}' '$1 == device { print $2 }'
           )
           xcrun simctl boot "${UDID:?simulator not found}"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.channel }}
