@@ -1,3 +1,6 @@
+## 1.2.8
+* [#70](https://github.com/fluttercommunity/wakelock_plus/pull/70) chore(deps): Allow web ^1.0.0. Thanks [provokateurin](https://github.com/provokateurin).
+
 ## 1.2.7
 * [#64](https://github.com/fluttercommunity/wakelock_plus/pull/64) chore: rename messages_gKt. Thanks [defuncart](https://github.com/defuncart).
 
