@@ -6,8 +6,8 @@ version: 1.2.8
 repository: https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
-  flutter: ">=3.19.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
@@ -18,8 +18,8 @@ dependencies:
   wakelock_plus_platform_interface: ^1.2.1
 
   # Windows dependencies
-  # win32 is compatible across v4 and v5 for Win32 only (not COM)
-  win32: ">=5.4.0 <6.0.0"
+  # win32 is compatible across v5 for Win32 only (not COM)
+  win32: ">=5.5.1 <6.0.0"
 
   # Linux dependencies
   dbus: ^0.7.10
@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.2
-  pigeon: ^17.3.0 # dart run pigeon --input "pigeons/messages.dart"
+  pigeon: ^21.2.0 # dart run pigeon --input "pigeons/messages.dart"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
