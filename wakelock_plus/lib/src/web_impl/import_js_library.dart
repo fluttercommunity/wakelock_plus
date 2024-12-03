@@ -43,7 +43,7 @@ web.HTMLScriptElement _createScriptTag(String library) {
   return script;
 }
 
-/// Injects a bunch of libraries in the <head> and returns a
+/// Injects a bunch of libraries in the `<head>` and returns a
 /// Future that resolves when all load.
 Future<void> _importJSLibraries(List<String> libraries) {
   final loading = <Future<void>>[];
