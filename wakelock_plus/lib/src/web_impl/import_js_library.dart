@@ -1,5 +1,5 @@
 import 'dart:js_interop';
-import 'dart:ui_web';
+import 'dart:ui_web' as ui_web;
 
 import 'package:web/web.dart' as web;
 
@@ -19,15 +19,19 @@ Future<void> importJsLibrary(
 }
 
 String _libraryUrl(String url, String pluginName) {
+  // Added suggested changes as per
+  // https://github.com/fluttercommunity/wakelock_plus/issues/19#issuecomment-2301963609
   if (url.startsWith('./')) {
     url = url.replaceFirst('./', '');
-    return assetManager.getAssetUrl("packages/$pluginName/$url");
   }
+
   if (url.startsWith('assets/')) {
-    return assetManager.getAssetUrl("packages/$pluginName/$url");
-  } else {
-    return url;
+    return ui_web.assetManager.getAssetUrl(
+      'packages/$pluginName/$url',
+    );
   }
+
+  return url;
 }
 
 web.HTMLScriptElement _createScriptTag(String library) {
