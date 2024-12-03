@@ -135,6 +135,7 @@ var NoSleep = (function () {
         var _this2 = this
 
         if (nativeWakeLock) {
+          // Disalbe any previously held wakelocks.
           await this.disable()
           if (_nativeEnabledCompleter == null) {
             _nativeEnabledCompleter = new PromiseCompleter()
@@ -146,6 +147,7 @@ var NoSleep = (function () {
               _this2.nativeEnabled = true
               _nativeEnabledCompleter.complete()
               _nativeEnabledCompleter = null
+              // We now have a wakelock. Notify all of the existing callers.
               console.log("Wake Lock active.");
               _this2._wakeLock.addEventListener('release', function () {
                 _this2.nativeEnabled = false
@@ -160,6 +162,7 @@ var NoSleep = (function () {
               _nativeEnabledCompleter.completeError(errorMessage)
               _nativeEnabledCompleter = null
             })
+          // We then wait for screen to be made available.
           return _nativeEnabledCompleter.future
         } else if (oldIOS) {
           this.disable()
@@ -195,6 +198,7 @@ var NoSleep = (function () {
       key: 'disable',
       value: async function disable() {
         if (nativeWakeLock) {
+          // If we're still trying to enable the wakelock, wait for it to be enabled
           if (_nativeEnabledCompleter != null) {
             await _nativeEnabledCompleter.future
           }
@@ -225,6 +229,7 @@ var NoSleep = (function () {
       key: 'isEnabled',
       value: async function isEnabled() {
         if (nativeWakeLock) {
+          // If we're still trying to enable the wakelock, wait for it to be enabled
           if (_nativeEnabledCompleter != null) {
             await _nativeEnabledCompleter.future
           }
