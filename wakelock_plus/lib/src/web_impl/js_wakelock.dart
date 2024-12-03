@@ -1,5 +1,5 @@
 @JS('Wakelock')
-library wakelock.js;
+library;
 
 import 'dart:js_interop';
 
