@@ -55,8 +55,8 @@ Future<void> _importJSLibraries(List<String> libraries) {
       head!.appendChild(scriptTag);
       loading.add(scriptTag.onLoad.first);
       scriptTag.onError.listen((event) {
-        final scriptElement = event.srcElement is web.HTMLScriptElement
-            ? event.srcElement as web.HTMLScriptElement
+        final scriptElement = event.target.isA<web.HTMLScriptElement>()
+            ? event.target as web.HTMLScriptElement
             : null;
         if (scriptElement != null) {
           loading.add(
