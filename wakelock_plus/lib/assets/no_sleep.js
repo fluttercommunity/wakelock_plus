@@ -1,3 +1,30 @@
+class PromiseCompleter {
+  _promise;
+  _resolve;
+  _reject;
+  constructor() {
+    this._promise = new Promise((resolve, reject) => {
+      this._resolve = resolve;
+      this._reject = reject;
+    });
+  }
+
+  isCompleted = false;
+
+  get future() {
+    return this._promise;
+  }
+
+  complete(value) {
+    this.isCompleted = true;
+    this._resolve(value);
+  }
+
+  completeError(error) {
+    this._reject(error);
+  }
+}
+
 var webm =
   'data:video/webm;base64,GkXfo0AgQoaBAUL3gQFC8oEEQvOBCEKCQAR3ZWJtQoeBAkKFgQIYU4BnQI0VSalmQCgq17FAAw9CQE2AQAZ3aGFtbXlXQUAGd2hhbW15RIlACECPQAAAAAAAFlSua0AxrkAu14EBY8WBAZyBACK1nEADdW5khkAFVl9WUDglhohAA1ZQOIOBAeBABrCBCLqBCB9DtnVAIueBAKNAHIEAAIAwAQCdASoIAAgAAUAmJaQAA3AA/vz0AAA='
 var mp4 =
@@ -46,21 +73,19 @@ var oldIOS =
 var nativeWakeLock = 'wakeLock' in navigator
 
 var NoSleep = (function () {
-  var _releasedNative = true
-  var _nativeRequestInProgress = false
+  var _nativeEnabledCompleter;
+  var _playVideoCompleter;
 
   function NoSleep() {
     var _this = this
 
     _classCallCheck(this, NoSleep)
 
+    this.nativeEnabled = false
     if (nativeWakeLock) {
       this._wakeLock = null
       var handleVisibilityChange = function handleVisibilityChange() {
-        if (
-          _this._wakeLock !== null &&
-          document.visibilityState === 'visible'
-        ) {
+        if (_this._wakeLock !== null && document.visibilityState === 'visible') {
           _this.enable()
         }
       }
@@ -106,27 +131,36 @@ var NoSleep = (function () {
     },
     {
       key: 'enable',
-      value: function enable() {
+      value: async function enable() {
         var _this2 = this
 
         if (nativeWakeLock) {
-          _nativeRequestInProgress = true
+          await this.disable()
+          if (_nativeEnabledCompleter == null) {
+            _nativeEnabledCompleter = new PromiseCompleter()
+          }
           navigator.wakeLock
             .request('screen')
             .then(function (wakeLock) {
-              _releasedNative = false
-              _nativeRequestInProgress = false
-
               _this2._wakeLock = wakeLock
+              _this2.nativeEnabled = true
+              _nativeEnabledCompleter.complete()
+              _nativeEnabledCompleter = null
+              console.log("Wake Lock active.");
               _this2._wakeLock.addEventListener('release', function () {
-                _releasedNative = true
+                _this2.nativeEnabled = false
                 _this2._wakeLock = null
+                console.log("Wake Lock released.");
               })
             })
             .catch(function (err) {
-              _nativeRequestInProgress = false
-              console.error(err.name + ', ' + err.message)
+              _this2.nativeEnabled = false
+              var errorMessage = err.name + ', ' + err.message
+              console.error(errorMessage)
+              _nativeEnabledCompleter.completeError(errorMessage)
+              _nativeEnabledCompleter = null
             })
+          return _nativeEnabledCompleter.future
         } else if (oldIOS) {
           this.disable()
           console.warn(
@@ -138,17 +172,34 @@ var NoSleep = (function () {
               window.setTimeout(window.stop, 0)
             }
           }, 15000)
+          return Promise.resolve()
         } else {
-          this.noSleepVideo.play()
+          if (_playVideoCompleter == null) {
+            _playVideoCompleter = new PromiseCompleter()
+          }
+          var playPromise = this.noSleepVideo.play()
+          playPromise.then(function (res) {
+            _playVideoCompleter.complete()
+            _playVideoCompleter = null
+          }).catch(function (err) {
+            var errorMessage = err.name + ', ' + err.message
+            console.error(errorMessage)
+            _playVideoCompleter.completeError(errorMessage)
+            _playVideoCompleter = null
+          });
+          return _playVideoCompleter.future
         }
       },
     },
     {
       key: 'disable',
-      value: function disable() {
+      value: async function disable() {
         if (nativeWakeLock) {
+          if (_nativeEnabledCompleter != null) {
+            await _nativeEnabledCompleter.future
+          }
           if (this._wakeLock != null) {
-            _releasedNative = true
+            this.nativeEnabled = false
             this._wakeLock.release()
           }
 
@@ -162,34 +213,29 @@ var NoSleep = (function () {
             this.noSleepTimer = null
           }
         } else {
+          if (_playVideoCompleter != null) {
+            await _playVideoCompleter.future
+          }
           this.noSleepVideo.pause()
         }
+        return Promise.resolve();
       },
     },
     {
-      key: 'enabled',
-      value: async function enabled() {
+      key: 'isEnabled',
+      value: async function isEnabled() {
         if (nativeWakeLock) {
-          if (_nativeRequestInProgress == true) {
-            // Wait until the request is done.
-            while (true) {
-              // Wait for 42 milliseconds.
-              await new Promise((resolve, reject) => setTimeout(resolve, 42))
-              if (_nativeRequestInProgress == false) {
-                break
-              }
-            }
+          if (_nativeEnabledCompleter != null) {
+            await _nativeEnabledCompleter.future
           }
 
-          // todo: use WakeLockSentinel.released when that is available (https://developer.mozilla.org/en-US/docs/Web/API/WakeLockSentinel/released)
-          if (_releasedNative != false) {
-            return false
-          }
-
-          return true
+          return this.nativeEnabled
         } else if (oldIOS) {
           return this.noSleepTimer != null
         } else {
+          if (_playVideoCompleter != null) {
+            await _playVideoCompleter.future
+          }
           if (this.noSleepVideo == undefined) {
             return false
           }
@@ -208,17 +254,22 @@ var noSleep = new NoSleep()
 var Wakelock = {
   enabled: async function () {
     try {
-      return noSleep.enabled()
+      return noSleep.isEnabled()
     } catch (e) {
       return false
     }
   },
   toggle: async function (enable) {
-    if (enable) {
-      noSleep.enable()
-    } else {
-      noSleep.disable()
+    try {
+      if (enable) {
+        await noSleep.enable()
+      } else {
+        await noSleep.disable()
+      }
+    } catch (e) {
+      throw e
     }
+    return Promise.resolve()
   },
 }
 

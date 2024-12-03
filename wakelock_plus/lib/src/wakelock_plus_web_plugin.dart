@@ -40,8 +40,20 @@ class WakelockPlusWebPlugin extends WakelockPlusPlatformInterface {
   Future<void> toggle({required bool enable}) async {
     // Make sure the JS library is loaded before calling it.
     await _ensureJsLoaded();
+    final completer = Completer<void>();
 
-    wakelock_plus_web.toggle(enable);
+    wakelock_plus_web.toggle(enable).toDart.then(
+      // onResolve
+      (value) {
+        completer.complete();
+      },
+      // onReject
+      onError: (error) {
+        completer.completeError(error);
+      },
+    );
+
+    return completer.future;
   }
 
   @override

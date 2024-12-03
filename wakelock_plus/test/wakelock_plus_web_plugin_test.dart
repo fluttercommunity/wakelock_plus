@@ -17,6 +17,10 @@ void main() {
       WakelockPlusPlatformInterface.instance = WakelockPlusWebPlugin();
     });
 
+    tearDown(() async {
+      await WakelockPlus.disable();
+    });
+
     test('$WakelockPlusWebPlugin set as default instance', () {
       expect(
           WakelockPlusPlatformInterface.instance, isA<WakelockPlusWebPlugin>());
@@ -28,23 +32,32 @@ void main() {
 
     test('enable', () async {
       await WakelockPlus.enable();
-      // Wait a bit for web to enable the wakelock
-      await Future.delayed(const Duration(milliseconds: 50));
+      expect(WakelockPlus.enabled, completion(isTrue));
+    });
+
+    test('enable more than once', () async {
+      await WakelockPlus.enable();
+      await WakelockPlus.enable();
+      await WakelockPlus.enable();
       expect(WakelockPlus.enabled, completion(isTrue));
     });
 
     test('disable', () async {
       await WakelockPlus.enable();
-      // Wait a bit for web to enable the wakelock
-      await Future.delayed(const Duration(milliseconds: 50));
+      await WakelockPlus.disable();
+      expect(WakelockPlus.enabled, completion(isFalse));
+    });
+
+    test('disable more than once', () async {
+      await WakelockPlus.enable();
+      await WakelockPlus.disable();
+      await WakelockPlus.disable();
       await WakelockPlus.disable();
       expect(WakelockPlus.enabled, completion(isFalse));
     });
 
     test('toggle', () async {
       await WakelockPlus.toggle(enable: true);
-      // Wait a bit for web to enable the wakelock
-      await Future.delayed(const Duration(milliseconds: 50));
       expect(WakelockPlus.enabled, completion(isTrue));
 
       await WakelockPlus.toggle(enable: false);
