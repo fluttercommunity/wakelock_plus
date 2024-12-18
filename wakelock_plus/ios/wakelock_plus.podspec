@@ -20,5 +20,5 @@ Plugin that allows you to keep the device screen awake, i.e. prevent the screen 
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-  s.resource_bundles = {'thermal' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'wakelock_plus_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
