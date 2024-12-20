@@ -27,31 +27,31 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@interface FLTToggleMessage ()
-+ (FLTToggleMessage *)fromList:(NSArray<id> *)list;
-+ (nullable FLTToggleMessage *)nullableFromList:(NSArray<id> *)list;
+@interface WAKELOCKPLUSToggleMessage ()
++ (WAKELOCKPLUSToggleMessage *)fromList:(NSArray<id> *)list;
++ (nullable WAKELOCKPLUSToggleMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@interface FLTIsEnabledMessage ()
-+ (FLTIsEnabledMessage *)fromList:(NSArray<id> *)list;
-+ (nullable FLTIsEnabledMessage *)nullableFromList:(NSArray<id> *)list;
+@interface WAKELOCKPLUSIsEnabledMessage ()
++ (WAKELOCKPLUSIsEnabledMessage *)fromList:(NSArray<id> *)list;
++ (nullable WAKELOCKPLUSIsEnabledMessage *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
-@implementation FLTToggleMessage
+@implementation WAKELOCKPLUSToggleMessage
 + (instancetype)makeWithEnable:(nullable NSNumber *)enable {
-  FLTToggleMessage* pigeonResult = [[FLTToggleMessage alloc] init];
+  WAKELOCKPLUSToggleMessage* pigeonResult = [[WAKELOCKPLUSToggleMessage alloc] init];
   pigeonResult.enable = enable;
   return pigeonResult;
 }
-+ (FLTToggleMessage *)fromList:(NSArray<id> *)list {
-  FLTToggleMessage *pigeonResult = [[FLTToggleMessage alloc] init];
++ (WAKELOCKPLUSToggleMessage *)fromList:(NSArray<id> *)list {
+  WAKELOCKPLUSToggleMessage *pigeonResult = [[WAKELOCKPLUSToggleMessage alloc] init];
   pigeonResult.enable = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
-+ (nullable FLTToggleMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FLTToggleMessage fromList:list] : nil;
++ (nullable WAKELOCKPLUSToggleMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [WAKELOCKPLUSToggleMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -60,19 +60,19 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FLTIsEnabledMessage
+@implementation WAKELOCKPLUSIsEnabledMessage
 + (instancetype)makeWithEnabled:(nullable NSNumber *)enabled {
-  FLTIsEnabledMessage* pigeonResult = [[FLTIsEnabledMessage alloc] init];
+  WAKELOCKPLUSIsEnabledMessage* pigeonResult = [[WAKELOCKPLUSIsEnabledMessage alloc] init];
   pigeonResult.enabled = enabled;
   return pigeonResult;
 }
-+ (FLTIsEnabledMessage *)fromList:(NSArray<id> *)list {
-  FLTIsEnabledMessage *pigeonResult = [[FLTIsEnabledMessage alloc] init];
++ (WAKELOCKPLUSIsEnabledMessage *)fromList:(NSArray<id> *)list {
+  WAKELOCKPLUSIsEnabledMessage *pigeonResult = [[WAKELOCKPLUSIsEnabledMessage alloc] init];
   pigeonResult.enabled = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
-+ (nullable FLTIsEnabledMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FLTIsEnabledMessage fromList:list] : nil;
++ (nullable WAKELOCKPLUSIsEnabledMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [WAKELOCKPLUSIsEnabledMessage fromList:list] : nil;
 }
 - (NSArray<id> *)toList {
   return @[
@@ -81,29 +81,29 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@interface FLTMessagesPigeonCodecReader : FlutterStandardReader
+@interface WAKELOCKPLUSMessagesPigeonCodecReader : FlutterStandardReader
 @end
-@implementation FLTMessagesPigeonCodecReader
+@implementation WAKELOCKPLUSMessagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 129: 
-      return [FLTToggleMessage fromList:[self readValue]];
+      return [WAKELOCKPLUSToggleMessage fromList:[self readValue]];
     case 130: 
-      return [FLTIsEnabledMessage fromList:[self readValue]];
+      return [WAKELOCKPLUSIsEnabledMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface FLTMessagesPigeonCodecWriter : FlutterStandardWriter
+@interface WAKELOCKPLUSMessagesPigeonCodecWriter : FlutterStandardWriter
 @end
-@implementation FLTMessagesPigeonCodecWriter
+@implementation WAKELOCKPLUSMessagesPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTToggleMessage class]]) {
+  if ([value isKindOfClass:[WAKELOCKPLUSToggleMessage class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTIsEnabledMessage class]]) {
+  } else if ([value isKindOfClass:[WAKELOCKPLUSIsEnabledMessage class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
   } else {
@@ -112,43 +112,43 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@interface FLTMessagesPigeonCodecReaderWriter : FlutterStandardReaderWriter
+@interface WAKELOCKPLUSMessagesPigeonCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation FLTMessagesPigeonCodecReaderWriter
+@implementation WAKELOCKPLUSMessagesPigeonCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTMessagesPigeonCodecWriter alloc] initWithData:data];
+  return [[WAKELOCKPLUSMessagesPigeonCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTMessagesPigeonCodecReader alloc] initWithData:data];
+  return [[WAKELOCKPLUSMessagesPigeonCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *FLTGetMessagesCodec(void) {
+NSObject<FlutterMessageCodec> *WAKELOCKPLUSGetMessagesCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLTMessagesPigeonCodecReaderWriter *readerWriter = [[FLTMessagesPigeonCodecReaderWriter alloc] init];
+    WAKELOCKPLUSMessagesPigeonCodecReaderWriter *readerWriter = [[WAKELOCKPLUSMessagesPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
-void SetUpFLTWakelockPlusApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTWakelockPlusApi> *api) {
-  SetUpFLTWakelockPlusApiWithSuffix(binaryMessenger, api, @"");
+void SetUpWAKELOCKPLUSWakelockPlusApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<WAKELOCKPLUSWakelockPlusApi> *api) {
+  SetUpWAKELOCKPLUSWakelockPlusApiWithSuffix(binaryMessenger, api, @"");
 }
 
-void SetUpFLTWakelockPlusApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTWakelockPlusApi> *api, NSString *messageChannelSuffix) {
+void SetUpWAKELOCKPLUSWakelockPlusApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<WAKELOCKPLUSWakelockPlusApi> *api, NSString *messageChannelSuffix) {
   messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
         initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FLTGetMessagesCodec()];
+        codec:WAKELOCKPLUSGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(toggleMsg:error:)], @"FLTWakelockPlusApi api (%@) doesn't respond to @selector(toggleMsg:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(toggleMsg:error:)], @"WAKELOCKPLUSWakelockPlusApi api (%@) doesn't respond to @selector(toggleMsg:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FLTToggleMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
+        WAKELOCKPLUSToggleMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         [api toggleMsg:arg_msg error:&error];
         callback(wrapResult(nil, error));
@@ -162,12 +162,12 @@ void SetUpFLTWakelockPlusApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenge
       [[FlutterBasicMessageChannel alloc]
         initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FLTGetMessagesCodec()];
+        codec:WAKELOCKPLUSGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isEnabledWithError:)], @"FLTWakelockPlusApi api (%@) doesn't respond to @selector(isEnabledWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(isEnabledWithError:)], @"WAKELOCKPLUSWakelockPlusApi api (%@) doesn't respond to @selector(isEnabledWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        FLTIsEnabledMessage *output = [api isEnabledWithError:&error];
+        WAKELOCKPLUSIsEnabledMessage *output = [api isEnabledWithError:&error];
         callback(wrapResult(output, error));
       }];
     } else {
