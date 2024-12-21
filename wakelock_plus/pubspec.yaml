@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.2
-  pigeon: ^21.2.0 # dart run pigeon --input "pigeons/messages.dart"
+  pigeon: ^22.7.0 # dart run pigeon --input "pigeons/messages.dart"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
