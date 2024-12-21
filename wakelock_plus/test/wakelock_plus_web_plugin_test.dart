@@ -1,5 +1,5 @@
 @TestOn('browser')
-library wakelock_plus_library_plugin_test;
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wakelock_plus/src/wakelock_plus_web_plugin.dart';
