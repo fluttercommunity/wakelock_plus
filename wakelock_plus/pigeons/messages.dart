@@ -16,7 +16,7 @@ class IsEnabledMessage {
   objcHeaderOut: 'ios/Classes/messages.g.h',
   objcSourceOut: 'ios/Classes/messages.g.m',
   objcOptions: ObjcOptions(
-    prefix: 'FLT',
+    prefix: 'WAKELOCKPLUS',
   ),
   kotlinOptions: KotlinOptions(errorClassName: "WakelockPlusFlutterError"),
   kotlinOut:

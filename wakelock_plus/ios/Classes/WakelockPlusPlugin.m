@@ -2,7 +2,7 @@
 #import "messages.g.h"
 #import "UIApplication+idleTimerLock.h"
 
-@interface WakelockPlusPlugin () <FLTWakelockPlusApi>
+@interface WakelockPlusPlugin () <WAKELOCKPLUSWakelockPlusApi>
 
 @property (nonatomic, assign) BOOL enable;
 
@@ -11,10 +11,10 @@
 @implementation WakelockPlusPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   WakelockPlusPlugin* instance = [[WakelockPlusPlugin alloc] init];
-  SetUpFLTWakelockPlusApi(registrar.messenger, instance);
+  SetUpWAKELOCKPLUSWakelockPlusApi(registrar.messenger, instance);
 }
 
-- (void)toggleMsg:(FLTToggleMessage*)input error:(FlutterError**)error {
+- (void)toggleMsg:(WAKELOCKPLUSToggleMessage*)input error:(FlutterError**)error {
   BOOL enable = [input.enable boolValue];
   if (!enable) {
     [[UIApplication sharedApplication] lock_idleTimerlockEnable:enable];//should disable first
@@ -34,9 +34,9 @@
 }
 
 
-- (FLTIsEnabledMessage*)isEnabledWithError:(FlutterError* __autoreleasing *)error {
+- (WAKELOCKPLUSIsEnabledMessage*)isEnabledWithError:(FlutterError* __autoreleasing *)error {
   NSNumber *enabled = [NSNumber numberWithBool:[[UIApplication sharedApplication] isIdleTimerDisabled]];
-  FLTIsEnabledMessage* result = [[FLTIsEnabledMessage alloc] init];
+  WAKELOCKPLUSIsEnabledMessage* result = [[WAKELOCKPLUSIsEnabledMessage alloc] init];
   result.enabled = enabled;
   return result;
 }

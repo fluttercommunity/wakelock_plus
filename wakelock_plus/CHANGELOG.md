@@ -1,3 +1,9 @@
+## 1.2.10
+* [#82](https://github.com/fluttercommunity/wakelock_plus/pull/82): fix: resolve symbol conflicts in wakelock_plus by updating Pigeon prefix. Thanks [weitsai](https://github.com/weitsai).
+
+## 1.2.9
+* [#70](https://github.com/fluttercommunity/wakelock_plus/pull/81) fixed resource bundle name in podspec. Thanks [Brazol](https://github.com/Brazol).
+
 ## 1.2.8
 * [#70](https://github.com/fluttercommunity/wakelock_plus/pull/70) chore(deps): Allow web ^1.0.0. Thanks [provokateurin](https://github.com/provokateurin).
 
