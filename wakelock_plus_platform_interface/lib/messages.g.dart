@@ -15,8 +15,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -70,6 +69,7 @@ class IsEnabledMessage {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -77,7 +77,7 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is ToggleMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is IsEnabledMessage) {
+    } else     if (value is IsEnabledMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -88,9 +88,9 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         return ToggleMessage.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return IsEnabledMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -102,11 +102,9 @@ class WakelockPlusApi {
   /// Constructor for [WakelockPlusApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  WakelockPlusApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  WakelockPlusApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -114,10 +112,8 @@ class WakelockPlusApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> toggle(ToggleMessage msg) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -138,10 +134,8 @@ class WakelockPlusApi {
   }
 
   Future<IsEnabledMessage> isEnabled() async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
