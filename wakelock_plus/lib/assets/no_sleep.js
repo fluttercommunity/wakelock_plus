@@ -135,7 +135,7 @@ var NoSleep = (function () {
         var _this2 = this
 
         if (nativeWakeLock) {
-          // Disalbe any previously held wakelocks.
+          // Disable any previously held wakelocks.
           await this.disable()
           if (_nativeEnabledCompleter == null) {
             _nativeEnabledCompleter = new PromiseCompleter()
