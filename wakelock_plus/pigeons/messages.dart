@@ -13,7 +13,8 @@ class IsEnabledMessage {
 @ConfigurePigeon(PigeonOptions(
   dartOut: '../wakelock_plus_platform_interface/lib/messages.g.dart',
   dartTestOut: '../wakelock_plus_platform_interface/test/messages.g.dart',
-  objcHeaderOut: 'ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h',
+  objcHeaderOut:
+      'ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h',
   objcSourceOut: 'ios/wakelock_plus/Sources/wakelock_plus/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'WAKELOCKPLUS',
