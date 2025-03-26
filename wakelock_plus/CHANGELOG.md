@@ -1,3 +1,6 @@
+## [1.2.11]
+* [#92](https://github.com/fluttercommunity/wakelock_plus/pull/92): refactor(windows): Apply deprecation of win32 package. Thanks [Gustl22](https://github.com/Gustl22).
+
 ## 1.2.10
 * [#82](https://github.com/fluttercommunity/wakelock_plus/pull/82): fix: resolve symbol conflicts in wakelock_plus by updating Pigeon prefix. Thanks [weitsai](https://github.com/weitsai).
 
