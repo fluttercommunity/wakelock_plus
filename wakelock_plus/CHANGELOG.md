@@ -1,3 +1,6 @@
+## [1.3.0]
+* [#90](https://github.com/fluttercommunity/wakelock_plus/pull/90): Add Swift Package Manager Support. Thanks [Gustl22](https://github.com/Gustl22).
+
 ## [1.2.11]
 * [#92](https://github.com/fluttercommunity/wakelock_plus/pull/92): refactor(windows): Apply deprecation of win32 package. Thanks [Gustl22](https://github.com/Gustl22).
 
