@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
-  wakelock_plus: 373cfe59b235a6dd5837d0fb88791d2f13a90d56
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
 
 PODFILE CHECKSUM: beab77b38961de946f08660e554f80ac174dc842
 
-COCOAPODS: 1.16.1
+COCOAPODS: 1.16.2

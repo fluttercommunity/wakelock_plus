@@ -1,3 +1,6 @@
+## [1.3.1]
+* [#95](https://github.com/fluttercommunity/wakelock_plus/pull/95): Fix SPM integration. Thanks [diegotori](https://github.com/diegotori).
+
 ## [1.3.0]
 * [#90](https://github.com/fluttercommunity/wakelock_plus/pull/90): Add Swift Package Manager Support. Thanks [Gustl22](https://github.com/Gustl22).
 

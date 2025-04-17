@@ -5,7 +5,7 @@
 //  Created by suyao on 2021/12/17.
 //
 
-#import "UIApplication+idleTimerLock.h"
+#import "./include/wakelock_plus/UIApplication+idleTimerLock.h"
 #import <objc/runtime.h>
 
 static NSString *idleTimerLockKey = @"idleTimerLockKey";

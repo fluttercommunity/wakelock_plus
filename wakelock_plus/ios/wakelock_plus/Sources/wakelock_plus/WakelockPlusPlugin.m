@@ -1,6 +1,6 @@
-#import "WakelockPlusPlugin.h"
-#import "messages.g.h"
-#import "UIApplication+idleTimerLock.h"
+#import "./include/wakelock_plus/WakelockPlusPlugin.h"
+#import "./include/wakelock_plus/messages.g.h"
+#import "./include/wakelock_plus/UIApplication+idleTimerLock.h"
 
 @interface WakelockPlusPlugin () <WAKELOCKPLUSWakelockPlusApi>
 
