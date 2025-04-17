@@ -16,7 +16,7 @@ Plugin that allows you to keep the device screen awake, i.e. prevent the screen 
   s.source_files = 'wakelock_plus/Sources/wakelock_plus/**/*.{h,m}'
   s.public_header_files = 'wakelock_plus/Sources/wakelock_plus/include/**/*.h'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
