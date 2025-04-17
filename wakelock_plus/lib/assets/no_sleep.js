@@ -129,13 +129,15 @@ var NoSleep = (function () {
             .then(function (wakeLock) {
               _this2._wakeLock = wakeLock
               _this2.nativeEnabled = true
-              _nativeEnabledCompleter.complete()
-              _nativeEnabledCompleter = null
+
               // We now have a wakelock. Notify all of the existing callers.
               _this2._wakeLock.addEventListener('release', function () {
                 _this2.nativeEnabled = false
                 _this2._wakeLock = null
               })
+
+              _nativeEnabledCompleter.complete()
+              _nativeEnabledCompleter = null
             })
             .catch(function (err) {
               _this2.nativeEnabled = false
