@@ -1,6 +1,7 @@
-import 'dart:js_interop';
+import 'dart:async';
+import 'dart:ui_web' as ui_web;
 
-import 'package:web/web.dart';
+import 'package:web/web.dart' as web;
 
 /// This is an implementation of the `import_js_library` plugin that is used
 /// until that plugin is migrated to null safety.
@@ -18,59 +19,85 @@ Future<void> importJsLibrary(
 }
 
 String _libraryUrl(String url, String pluginName) {
+  // Added suggested changes as per
+  // https://github.com/fluttercommunity/wakelock_plus/issues/19#issuecomment-2301963609
   if (url.startsWith('./')) {
     url = url.replaceFirst('./', '');
-    return './assets/packages/$pluginName/$url';
   }
+
   if (url.startsWith('assets/')) {
-    return './assets/packages/$pluginName/$url';
-  } else {
-    return url;
+    return ui_web.assetManager.getAssetUrl(
+      'packages/$pluginName/$url',
+    );
   }
+
+  return url;
 }
 
-HTMLScriptElement _createScriptTag(String library) {
-  final script = document.createElement('script') as HTMLScriptElement
+Future? _importRunning;
+Map<String, String> _loadedLibraries = {};
+int _nextLibraryId = 0;
+
+web.HTMLScriptElement _createScriptTag(String library) {
+  final scriptId = 'imported-js-library-${_nextLibraryId++}';
+  final script = web.document.createElement('script') as web.HTMLScriptElement
     ..type = 'text/javascript'
     ..charset = 'utf-8'
     ..async = true
-    ..src = library;
+    ..src = library
+    ..id = scriptId;
   return script;
 }
 
 /// Injects a bunch of libraries in the `<head>` and returns a
 /// Future that resolves when all load.
-Future<void> _importJSLibraries(List<String> libraries) {
+Future<void> _importJSLibraries(List<String> libraries) async {
+  // we add the library to _loadedLibraries asynchronously, so we need locking.
+  // Dart uses voluntary preemption, so everything between two `await`s can be
+  // considered locked
+  while (_importRunning != null) {
+    await _importRunning;
+  }
+  final importLockCompleter = Completer();
+  _importRunning = importLockCompleter.future;
   final loading = <Future<void>>[];
-  final head = document.head;
+  final head = web.document.head;
 
   for (final library in libraries) {
     if (!_isImported(library)) {
       final scriptTag = _createScriptTag(library);
       head!.appendChild(scriptTag);
-      loading.add(scriptTag.onLoad.first);
+      final completer = Completer();
+      loading.add(completer.future);
+
+      scriptTag.onLoad.first.then((_) {
+        _loadedLibraries[library] = scriptTag.id;
+        completer.complete();
+      });
+      scriptTag.onError.first.then((event) =>
+          completer.completeError(Exception('Error loading: $library')));
     }
   }
 
-  return Future.wait(loading);
+  try {
+    await Future.wait(loading, eagerError: true);
+  } finally {
+    // first "unlock" future, then complete the completer for anyone already waiting.
+    // I'm not sure if `.complete()` is yielding execution, so this is the safe order
+    _importRunning = null;
+    importLockCompleter.complete();
+  }
 }
 
 bool _isImported(String url) {
-  final head = document.head!;
+  final head = web.document.head!;
   return _isLoaded(head, url);
 }
 
-bool _isLoaded(HTMLHeadElement head, String url) {
-  if (url.startsWith('./')) {
-    url = url.replaceFirst('./', '');
+bool _isLoaded(web.HTMLHeadElement head, String url) {
+  final scriptId = _loadedLibraries[url];
+  if (scriptId == null) {
+    return false;
   }
-  for (int i = 0; i < head.children.length; i++) {
-    final element = head.children.item(i)!;
-    if (element.instanceOfString('HTMLScriptElement')) {
-      if ((element as HTMLScriptElement).src.endsWith(url)) {
-        return true;
-      }
-    }
-  }
-  return false;
+  return head.querySelector('#$scriptId') != null;
 }
