@@ -17,7 +17,7 @@ let package = Package(
             name: "wakelock_plus",
             dependencies: [],
             resources: [
-                .process("PrivacyInfo.xcprivacy"),
+                .process("Resources")
             ],
             cSettings: [
                 .headerSearchPath("include/wakelock_plus")
