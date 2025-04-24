@@ -1,3 +1,6 @@
+## [1.3.2]
+* [#98](https://github.com/fluttercommunity/wakelock_plus/pull/98): fix(ios): fix path to PrivacyInfo.xcprivacy. Thanks [slobodanmilinkovic](https://github.com/slobodanmilinkovic).
+
 ## [1.3.1]
 * [#95](https://github.com/fluttercommunity/wakelock_plus/pull/95): Fix SPM integration. Thanks [diegotori](https://github.com/diegotori).
 
