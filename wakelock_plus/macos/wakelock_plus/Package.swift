@@ -9,7 +9,7 @@ let package = Package(
         .macOS("10.15")
     ],
     products: [
-        .library(name: "wakelock_plus", targets: ["wakelock_plus"])
+        .library(name: "wakelock-plus", targets: ["wakelock_plus"])
     ],
     dependencies: [],
     targets: [
