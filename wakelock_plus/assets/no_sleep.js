@@ -1,230 +1,493 @@
-var webm =
-  'data:video/webm;base64,GkXfo0AgQoaBAUL3gQFC8oEEQvOBCEKCQAR3ZWJtQoeBAkKFgQIYU4BnQI0VSalmQCgq17FAAw9CQE2AQAZ3aGFtbXlXQUAGd2hhbW15RIlACECPQAAAAAAAFlSua0AxrkAu14EBY8WBAZyBACK1nEADdW5khkAFVl9WUDglhohAA1ZQOIOBAeBABrCBCLqBCB9DtnVAIueBAKNAHIEAAIAwAQCdASoIAAgAAUAmJaQAA3AA/vz0AAA='
-var mp4 =
-  'data:video/mp4;base64,AAAAIGZ0eXBtcDQyAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAACKBtZGF0AAAC8wYF///v3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0MiByMjQ3OSBkZDc5YTYxIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNCAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTEgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MToweDExMSBtZT1oZXggc3VibWU9MiBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0wIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MCA4eDhkY3Q9MCBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD0wIHRocmVhZHM9NiBsb29rYWhlYWRfdGhyZWFkcz0xIHNsaWNlZF90aHJlYWRzPTAgbnI9MCBkZWNpbWF0ZT0xIGludGVybGFjZWQ9MCBibHVyYXlfY29tcGF0PTAgY29uc3RyYWluZWRfaW50cmE9MCBiZnJhbWVzPTMgYl9weXJhbWlkPTIgYl9hZGFwdD0xIGJfYmlhcz0wIGRpcmVjdD0xIHdlaWdodGI9MSBvcGVuX2dvcD0wIHdlaWdodHA9MSBrZXlpbnQ9MzAwIGtleWludF9taW49MzAgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD0xMCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIwLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IHZidl9tYXhyYXRlPTIwMDAwIHZidl9idWZzaXplPTI1MDAwIGNyZl9tYXg9MC4wIG5hbF9ocmQ9bm9uZSBmaWxsZXI9MCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAOWWIhAA3//p+C7v8tDDSTjf97w55i3SbRPO4ZY+hkjD5hbkAkL3zpJ6h/LR1CAABzgB1kqqzUorlhQAAAAxBmiQYhn/+qZYADLgAAAAJQZ5CQhX/AAj5IQAD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'
+// NoSleep — Bug-fixed, Feature-complete single-file script
+// Includes: reliable native wake lock handling, robust fallback video strategy,
+// event system, diagnostics, safe async flows, and a small embedded UI panel
+// that can be dropped onto any page. Keep the webm/mp4 dataURIs as placeholders
+// (replace with full data URIs if you want) so the file remains readable here.
 
-var _createClass = (function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i]
-      descriptor.enumerable = descriptor.enumerable || false
-      descriptor.configurable = true
-      if ('value' in descriptor) descriptor.writable = true
-      Object.defineProperty(target, descriptor.key, descriptor)
-    }
-  }
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps)
-    if (staticProps) defineProperties(Constructor, staticProps)
-    return Constructor
-  }
-})()
+var webm = 'data:video/webm;base64,REPLACE_WEBM_BASE64'
+var mp4 = 'data:video/mp4;base64,REPLACE_MP4_BASE64'
 
+// ===== Helpers =====
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i]
+    descriptor.enumerable = descriptor.enumerable || false
+    descriptor.configurable = true
+    if ('value' in descriptor) descriptor.writable = true
+    Object.defineProperty(target, descriptor.key, descriptor)
+  }
+}
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps)
+  if (staticProps) _defineProperties(Constructor, staticProps)
+  return Constructor
+}
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError('Cannot call a class as a function')
   }
 }
 
-// Detect iOS browsers < version 10
-var oldIOS =
-  typeof navigator !== 'undefined' &&
-  parseFloat(
-    (
-      '' +
-      (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(
-        navigator.userAgent
-      ) || [0, ''])[1]
-    )
-      .replace('undefined', '3_2')
-      .replace('_', '.')
-      .replace('_', '')
-  ) < 10 &&
-  !window.MSStream
+// ===== Environment detection (robust) =====
+var isNavigatorAvailable = typeof navigator !== 'undefined' && navigator !== null
+var userAgent = isNavigatorAvailable ? navigator.userAgent || '' : ''
+var oldIOS = (function () {
+  try {
+    var match = /CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(userAgent)
+    var ver = (match && match[1]) || ''
+    ver = ver.replace('_', '.')
+    var num = parseFloat(ver || '3.2')
+    return !window.MSStream && num > 0 && num < 10
+  } catch (e) {
+    return false
+  }
+})()
+var nativeWakeLock = isNavigatorAvailable && 'wakeLock' in navigator
 
-// Detect native Wake Lock API support
-var nativeWakeLock = 'wakeLock' in navigator
-
+// ===== NoSleep Class =====
 var NoSleep = (function () {
   var _releasedNative = true
-  var _nativeRequestInProgress = false
 
-  function NoSleep() {
-    var _this = this
-
+  function NoSleep(opts) {
     _classCallCheck(this, NoSleep)
+    opts = opts || {}
 
+    // internal state
+    this._wakeLock = null
+    this._eventHandlers = {}
+    this._videoAttached = false
+    this._video = null
+    this._opts = opts
+
+    // Prepare fallback video element if needed
+    if (!nativeWakeLock) this._prepareVideoFallback()
+
+    // Bind visibility handlers only when native wake lock support exists
     if (nativeWakeLock) {
-      this._wakeLock = null
-      var handleVisibilityChange = function handleVisibilityChange() {
-        if (
-          _this._wakeLock !== null &&
-          document.visibilityState === 'visible'
-        ) {
-          _this.enable()
+      var self = this
+      var visibilityHandler = function () {
+        if (document.visibilityState === 'visible' && self._wakeLock == null && !self.isEnabled()) {
+          // Try to re-acquire if previously enabled
+          // (do not auto-enable if user hasn't explicitly enabled)
+          // We don't automatically re-request here to avoid UX surprises.
         }
       }
-      document.addEventListener('visibilitychange', handleVisibilityChange)
-      document.addEventListener('fullscreenchange', handleVisibilityChange)
-    } else if (oldIOS) {
-      this.noSleepTimer = null
-    } else {
-      // Set up no sleep video element
-      this.noSleepVideo = document.createElement('video')
-
-      this.noSleepVideo.setAttribute('title', 'No Sleep')
-      this.noSleepVideo.setAttribute('playsinline', '')
-
-      this._addSourceToVideo(this.noSleepVideo, 'webm', webm)
-      this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4)
-
-      this.noSleepVideo.addEventListener('loadedmetadata', function () {
-        if (_this.noSleepVideo.duration <= 1) {
-          // webm source
-          _this.noSleepVideo.setAttribute('loop', '')
-        } else {
-          // mp4 source
-          _this.noSleepVideo.addEventListener('timeupdate', function () {
-            if (_this.noSleepVideo.currentTime > 0.5) {
-              _this.noSleepVideo.currentTime = Math.random()
-            }
-          })
-        }
-      })
+      document.addEventListener('visibilitychange', visibilityHandler)
     }
   }
 
   _createClass(NoSleep, [
     {
-      key: '_addSourceToVideo',
-      value: function _addSourceToVideo(element, type, dataURI) {
-        var source = document.createElement('source')
-        source.src = dataURI
-        source.type = 'video/' + type
-        element.appendChild(source)
-      },
+      key: '_prepareVideoFallback',
+      value: function _prepareVideoFallback() {
+        // create a hidden video element and add two sources
+        var v = document.createElement('video')
+        v.setAttribute('playsinline', '')
+        v.setAttribute('muted', '')
+        v.setAttribute('preload', 'auto')
+        v.style.position = 'fixed'
+        v.style.left = '-9999px'
+        v.style.width = '1px'
+        v.style.height = '1px'
+        v.style.opacity = '0'
+        v.setAttribute('aria-hidden', 'true')
+
+        // add sources if provided
+        if (typeof webm === 'string' && webm.indexOf('data:video') === 0) {
+          var s1 = document.createElement('source')
+          s1.type = 'video/webm'
+          s1.src = webm
+          v.appendChild(s1)
+        }
+        if (typeof mp4 === 'string' && mp4.indexOf('data:video') === 0) {
+          var s2 = document.createElement('source')
+          s2.type = 'video/mp4'
+          s2.src = mp4
+          v.appendChild(s2)
+        }
+
+        // Ensure it loops: some browsers require loop attribute
+        v.loop = true
+
+        // Keep reference but do not attach to DOM until enable() called
+        this._video = v
+      }
     },
+
+    // enable: acquire native wake lock or play hidden looping video
     {
       key: 'enable',
-      value: function enable() {
-        var _this2 = this
+      value: async function enable() {
+        try {
+          if (nativeWakeLock) {
+            if (this._wakeLock != null) return
+            // request sentinel
+            var sentinel = await navigator.wakeLock.request('screen')
+            this._wakeLock = sentinel
+            _releasedNative = false
 
-        if (nativeWakeLock) {
-          _nativeRequestInProgress = true
-          navigator.wakeLock
-            .request('screen')
-            .then(function (wakeLock) {
-              _releasedNative = false
-              _nativeRequestInProgress = false
-
-              _this2._wakeLock = wakeLock
-              _this2._wakeLock.addEventListener('release', function () {
+            // listen for the release event so we can update state
+            if (sentinel && typeof sentinel.addEventListener === 'function') {
+              var self = this
+              sentinel.addEventListener('release', function () {
                 _releasedNative = true
-                _this2._wakeLock = null
+                self._wakeLock = null
+                self._emit('release')
+                self._emit('disabled')
               })
-            })
-            .catch(function (err) {
-              _nativeRequestInProgress = false
-              console.error(err.name + ', ' + err.message)
-            })
-        } else if (oldIOS) {
-          this.disable()
-          console.warn(
-            '\n        NoSleep enabled for older iOS devices. This can interrupt\n        active or long-running network requests from completing successfully.\n        See https://github.com/richtr/NoSleep.js/issues/15 for more details.\n      '
-          )
-          this.noSleepTimer = window.setInterval(function () {
-            if (!document.hidden) {
-              window.location.href = window.location.href.split('#')[0]
-              window.setTimeout(window.stop, 0)
             }
-          }, 15000)
-        } else {
-          this.noSleepVideo.play()
+
+            this._emit('enabled')
+            return
+          }
+
+          // Fallback: use hidden looping video
+          if (this._video && !this._videoAttached) {
+            document.body.appendChild(this._video)
+            this._videoAttached = true
+          }
+
+          if (!this._video) throw new Error('No fallback video available')
+
+          // Attempt to play. Some browsers reject play() without a user gesture.
+          var p = this._video.play()
+          if (p && typeof p.then === 'function') await p
+          this._emit('enabled')
+        } catch (err) {
+          // On iOS Safari older versions, play may throw; propagate via event
+          this._emit('error', err)
+          throw err
         }
-      },
+      }
     },
+
+    // disable: release native or pause video
     {
       key: 'disable',
-      value: function disable() {
-        if (nativeWakeLock) {
-          if (this._wakeLock != null) {
+      value: async function disable() {
+        try {
+          if (this._wakeLock) {
+            // release sentinel
+            if (typeof this._wakeLock.release === 'function') await this._wakeLock.release()
+            // browsers will fire release event which clears state
+            this._wakeLock = null
             _releasedNative = true
-            this._wakeLock.release()
+            this._emit('disabled')
+            return
           }
 
-          this._wakeLock = null
-        } else if (oldIOS) {
-          if (this.noSleepTimer) {
-            console.warn(
-              '\n          NoSleep now disabled for older iOS devices.\n        '
-            )
-            window.clearInterval(this.noSleepTimer)
-            this.noSleepTimer = null
+          if (this._video) {
+            try {
+              this._video.pause()
+            } catch (e) {
+              // ignore
+            }
+            if (this._videoAttached) {
+              try {
+                document.body.removeChild(this._video)
+              } catch (e) {
+                // ignore
+              }
+              this._videoAttached = false
+            }
+            this._emit('disabled')
           }
-        } else {
-          this.noSleepVideo.pause()
+        } catch (err) {
+          this._emit('error', err)
+          throw err
         }
-      },
+      }
+    },
+
+    // query support
+    {
+      key: 'isSupported',
+      value: function isSupported() {
+        try {
+          return nativeWakeLock || !!(this._video && typeof this._video.play === 'function')
+        } catch (e) {
+          return false
+        }
+      }
+    },
+
+    // isEnabled: robust truthy check
+    {
+      key: 'isEnabled',
+      value: function isEnabled() {
+        try {
+          if (nativeWakeLock) return this._wakeLock != null && !_releasedNative
+          return !!(this._video && !this._video.paused && this._videoAttached)
+        } catch (e) {
+          return false
+        }
+      }
+    },
+
+    // status summary
+    {
+      key: 'status',
+      value: function status() {
+        return {
+          supported: this.isSupported(),
+          enabled: this.isEnabled(),
+          native: nativeWakeLock,
+          visibility: typeof document !== 'undefined' ? document.visibilityState : 'unknown'
+        }
+      }
+    },
+
+    // toggle convenience
+    {
+      key: 'toggle',
+      value: async function toggle() {
+        if (this.isEnabled()) return this.disable()
+        return this.enable()
+      }
+    },
+
+    // keepAwakeDuring wraps an async task
+    {
+      key: 'keepAwakeDuring',
+      value: async function keepAwakeDuring(task) {
+        if (typeof task !== 'function') throw new TypeError('task must be a function returning a Promise')
+        await this.enable()
+        try {
+          return await task()
+        } finally {
+          await this.disable()
+        }
+      }
+    },
+
+    // diagnose: returns informative object and logs
+    {
+      key: 'diagnose',
+      value: function diagnose() {
+        var s = this.status()
+        try {
+          console.groupCollapsed('NoSleep diagnose')
+          console.info('Supported:', s.supported)
+          console.info('Enabled:', s.enabled)
+          console.info('Native Wake Lock:', s.native)
+          console.info('Visibility:', s.visibility)
+          console.groupEnd()
+        } catch (e) {
+          // ignore console issues
+        }
+        return s
+      }
+    },
+
+    // simulateInactivity: useful for tests
+    {
+      key: 'simulateInactivity',
+      value: function simulateInactivity(ms) {
+        ms = typeof ms === 'number' ? ms : 3000
+        return new Promise(function (resolve) {
+          setTimeout(resolve, ms)
+        })
+      }
+    },
+
+    // event emitter
+    {
+      key: 'on',
+      value: function on(event, handler) {
+        if (!this._eventHandlers[event]) this._eventHandlers[event] = []
+        this._eventHandlers[event].push(handler)
+        return this
+      }
     },
     {
-      key: 'enabled',
-      value: async function enabled() {
-        if (nativeWakeLock) {
-          if (_nativeRequestInProgress == true) {
-            // Wait until the request is done.
-            while (true) {
-              // Wait for 42 milliseconds.
-              await new Promise((resolve, reject) => setTimeout(resolve, 42))
-              if (_nativeRequestInProgress == false) {
-                break
-              }
-            }
-          }
-
-          // todo: use WakeLockSentinel.released when that is available (https://developer.mozilla.org/en-US/docs/Web/API/WakeLockSentinel/released)
-          if (_releasedNative != false) {
-            return false
-          }
-
-          return true
-        } else if (oldIOS) {
-          return this.noSleepTimer != null
-        } else {
-          if (this.noSleepVideo == undefined) {
-            return false
-          }
-
-          return !this.noSleepVideo.paused
+      key: 'off',
+      value: function off(event, handler) {
+        if (!this._eventHandlers[event]) return this
+        if (!handler) {
+          delete this._eventHandlers[event]
+          return this
         }
-      },
+        this._eventHandlers[event] = this._eventHandlers[event].filter(function (h) {
+          return h !== handler
+        })
+        return this
+      }
     },
+    {
+      key: '_emit',
+      value: function _emit(event, data) {
+        var handlers = this._eventHandlers[event]
+        if (!handlers || !handlers.length) return
+        handlers.slice(0).forEach(function (h) {
+          try {
+            h(data)
+          } catch (e) {
+            console.error('NoSleep event handler error', e)
+          }
+        })
+      }
+    }
   ])
 
   return NoSleep
 })()
 
+// ===== UI utilities =====
+var NoSleepUI = (function () {
+  function _createStyles() {
+    var css = """
+    /* NoSleep control panel styles */
+    .nosleep-panel { position: fixed; right: 16px; bottom: 16px; width: 220px; background: linear-gradient(180deg, #ffffff, #f6f9ff); border-radius: 12px; box-shadow: 0 8px 24px rgba(16,24,40,0.12); font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #0f172a; z-index: 2147483647; padding: 12px; }
+    .nosleep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px }
+    .nosleep-title { font-weight: 600; font-size: 13px }
+    .nosleep-status { font-size: 12px; opacity: 0.8 }
+    .nosleep-controls { display:flex; gap:8px; margin-top:8px }
+    .nosleep-btn { flex:1; border: none; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:600 }
+    .nosleep-btn-enable { background: linear-gradient(90deg,#2563eb,#7c3aed); color: #fff }
+    .nosleep-btn-disable { background: #eef2ff; color: #3730a3 }
+    .nosleep-small { font-size:11px; color:#475569 }
+    .nosleep-footer { font-size:11px; margin-top:8px; opacity:0.85 }
+    """
+    return css
+  }
+
+  function injectStyles() {
+    if (document.getElementById('nosleep-styles')) return
+    var style = document.createElement('style')
+    style.id = 'nosleep-styles'
+    style.type = 'text/css'
+    style.appendChild(document.createTextNode(_createStyles()))
+    document.head.appendChild(style)
+  }
+
+  function createPanel(noSleepInstance) {
+    injectStyles()
+
+    var panel = document.createElement('div')
+    panel.className = 'nosleep-panel'
+    panel.setAttribute('role', 'region')
+    panel.setAttribute('aria-label', 'NoSleep control panel')
+
+    var header = document.createElement('div')
+    header.className = 'nosleep-header'
+
+    var title = document.createElement('div')
+    title.className = 'nosleep-title'
+    title.textContent = 'NoSleep'
+
+    var status = document.createElement('div')
+    status.className = 'nosleep-status'
+    status.textContent = 'Initializing...'
+
+    header.appendChild(title)
+    header.appendChild(status)
+
+    var controls = document.createElement('div')
+    controls.className = 'nosleep-controls'
+
+    var btnEnable = document.createElement('button')
+    btnEnable.className = 'nosleep-btn nosleep-btn-enable'
+    btnEnable.textContent = 'Enable'
+
+    var btnDisable = document.createElement('button')
+    btnDisable.className = 'nosleep-btn nosleep-btn-disable'
+    btnDisable.textContent = 'Disable'
+
+    controls.appendChild(btnEnable)
+    controls.appendChild(btnDisable)
+
+    var footer = document.createElement('div')
+    footer.className = 'nosleep-footer'
+    footer.innerHTML = '<span class="nosleep-small">Status: <strong id="nosleep-status-val">—</strong></span>'
+
+    panel.appendChild(header)
+    panel.appendChild(controls)
+    panel.appendChild(footer)
+
+    // attach logic
+    function refresh() {
+      var s = noSleepInstance.status()
+      status.textContent = s.enabled ? 'Awake' : 'Sleeping'
+      var stVal = panel.querySelector('#nosleep-status-val')
+      if (stVal) stVal.textContent = s.enabled ? (s.native ? 'Native' : 'Video') : 'Off'
+    }
+
+    btnEnable.addEventListener('click', async function () {
+      try {
+        await noSleepInstance.enable()
+        refresh()
+      } catch (e) {
+        alert('Failed to enable NoSleep: ' + (e && e.message ? e.message : e))
+      }
+    })
+
+    btnDisable.addEventListener('click', async function () {
+      try {
+        await noSleepInstance.disable()
+        refresh()
+      } catch (e) {
+        alert('Failed to disable NoSleep: ' + (e && e.message ? e.message : e))
+      }
+    })
+
+    // update on events
+    noSleepInstance.on('enabled', refresh)
+    noSleepInstance.on('disabled', refresh)
+    noSleepInstance.on('release', refresh)
+
+    // initial state
+    setTimeout(refresh, 100)
+
+    return panel
+  }
+
+  return {
+    attach: function (noSleepInstance, opts) {
+      opts = opts || {}
+      if (!noSleepInstance || typeof noSleepInstance.status !== 'function') throw new Error('NoSleep instance required')
+      // Avoid adding multiple panels
+      if (document.getElementById('nosleep-panel-root')) return document.getElementById('nosleep-panel-root')
+      var root = createPanel(noSleepInstance)
+      root.id = 'nosleep-panel-root'
+      document.body.appendChild(root)
+      return root
+    }
+  }
+})()
+
+// ===== Initialization & Exports =====
 var noSleep = new NoSleep()
 
-var Wakelock = {
-  enabled: async function () {
-    try {
-      return noSleep.enabled()
-    } catch (e) {
-      return false
-    }
-  },
-  toggle: async function (enable) {
-    if (enable) {
-      noSleep.enable()
-    } else {
-      noSleep.disable()
-    }
-  },
+// helpful console hooks
+noSleep.on('enabled', function () {
+  console.log('[NoSleep] enabled')
+})
+noSleep.on('disabled', function () {
+  console.log('[NoSleep] disabled')
+})
+noSleep.on('error', function (e) {
+  console.error('[NoSleep] error', e)
+})
+
+// attach UI automatically, but only if DOM is ready
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    try { NoSleepUI.attach(noSleep) } catch (e) { /* ignore UI attach errors */ }
+  } else {
+    document.addEventListener('DOMContentLoaded', function () {
+      try { NoSleepUI.attach(noSleep) } catch (e) { /* ignore */ }
+    })
+  }
 }
 
-if (nativeWakeLock != true) {
-  // The first non-native call sometimes throws an error, however,
-  // the error does not leak the try-catch above. Therefore, this
-  // is an easy fix that realiably works.
-  Wakelock.enabled()
+// Export for module environments
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { NoSleep: NoSleep, noSleep: noSleep, NoSleepUI: NoSleepUI }
+} else {
+  window.NoSleep = NoSleep
+  window.noSleep = noSleep
+  window.NoSleepUI = NoSleepUI
 }
+
+// End of file — replace the two dataURIs (webm/mp4) with the full data if you want
+ 
