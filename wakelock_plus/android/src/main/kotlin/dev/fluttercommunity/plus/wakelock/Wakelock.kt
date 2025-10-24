@@ -1,39 +1,56 @@
 package dev.fluttercommunity.plus.wakelock
 
-import IsEnabledMessage
-import ToggleMessage
 import android.app.Activity
 import android.view.WindowManager
+import IsEnabledMessage
+import ToggleMessage
 
+/**
+ * Manages the wakelock state to keep the screen on or off for an Android Activity.
+ */
 internal class Wakelock {
-  var activity: Activity? = null
+    var activity: Activity? = null
+        set(value) {
+            require(value != null) { "Activity cannot be null" }
+            field = value
+        }
 
-  private val enabled
-    get() = activity!!.window.attributes.flags and
-        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON != 0
+    private val isScreenKeptOn: Boolean
+        get() = activity?.window?.attributes?.flags
+            ?.and(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) != 0
 
-  fun toggle(message: ToggleMessage) {
-    if (activity == null) {
-      throw NoActivityException()
+    /**
+     * Toggles the wakelock state based on the provided [ToggleMessage].
+     *
+     * @param message The toggle message containing the enable state.
+     * @throws NoActivityException If no activity is set.
+     */
+    fun toggle(message: ToggleMessage) {
+        val currentActivity = activity ?: throw NoActivityException()
+        val enable = message.enable ?: return // Gracefully handle null enable
+
+        when {
+            enable && !isScreenKeptOn -> {
+                currentActivity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+            !enable && isScreenKeptOn -> {
+                currentActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        }
     }
 
-    val activity = this.activity!!
-    val enabled = this.enabled
-
-    if (message.enable!!) {
-      if (!enabled) activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    } else if (enabled) {
-      activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    /**
+     * Checks if the wakelock is currently enabled.
+     *
+     * @return [IsEnabledMessage] indicating whether the screen is kept on.
+     * @throws NoActivityException If no activity is set.
+     */
+    fun isEnabled(): IsEnabledMessage {
+        return IsEnabledMessage(enabled = isScreenKeptOn)
     }
-  }
-
-  fun isEnabled(): IsEnabledMessage {
-    if (activity == null) {
-      throw NoActivityException()
-    }
-
-    return IsEnabledMessage(enabled = enabled)
-  }
 }
 
-class NoActivityException : Exception("wakelock requires a foreground activity")
+/**
+ * Exception thrown when an operation requires a foreground activity but none is available.
+ */
+class NoActivityException : Exception("Wakelock requires a foreground activity")
