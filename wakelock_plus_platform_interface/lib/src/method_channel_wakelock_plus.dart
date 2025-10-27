@@ -6,10 +6,13 @@ class MethodChannelWakelockPlus extends WakelockPlusPlatformInterface {
   final _api = WakelockPlusApi();
 
   @override
+  bool get isMock => false;
+
+  @override
   Future<bool> get enabled async {
     final message = await _api.isEnabled();
 
-    return message.enabled!;
+    return message.enabled ?? false;
   }
 
   @override
@@ -18,5 +21,17 @@ class MethodChannelWakelockPlus extends WakelockPlusPlatformInterface {
     message.enable = enable;
 
     await _api.toggle(message);
+  }
+
+  /// Enables the wakelock.
+  @override
+  Future<void> enable() async {
+    await toggle(enable: true);
+  }
+
+  /// Disables the wakelock.
+  @override
+  Future<void> disable() async {
+    await toggle(enable: false);
   }
 }
