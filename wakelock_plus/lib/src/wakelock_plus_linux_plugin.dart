@@ -8,8 +8,8 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 /// The Linux implementation of the [WakelockPlusPlatformInterface].
 ///
 /// This class implements the `wakelock_plus` plugin functionality for Linux
-/// using the `org.freedesktop.ScreenSaver` D-Bus API
-/// (see https://specifications.freedesktop.org/idle-inhibit-spec/latest/re01.html).
+/// using the `org.freedesktop.portal.Inhibit` D-Bus API
+/// (see https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Inhibit).
 class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
   /// Registers this class as the default instance of [WakelockPlatformInterface].
   static void registerWith() {
@@ -17,19 +17,25 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
   }
 
   /// Constructs an instance of [WakelockPlusLinuxPlugin].
-  WakelockPlusLinuxPlugin({@visibleForTesting DBusRemoteObject? object})
-    : _object = object ?? _createRemoteObject();
-
-  final DBusRemoteObject _object;
-  int? _cookie;
-
-  static DBusRemoteObject _createRemoteObject() {
-    return DBusRemoteObject(
-      DBusClient.session(),
-      name: 'org.freedesktop.ScreenSaver',
-      path: DBusObjectPath('/org/freedesktop/ScreenSaver'),
-    );
+  factory WakelockPlusLinuxPlugin({
+    @visibleForTesting DBusClient? client,
+    @visibleForTesting DBusRemoteObject? object,
+  }) {
+    final dbusClient = client ?? DBusClient.session();
+    final remoteObject = object ??
+        DBusRemoteObject(
+          dbusClient,
+          name: 'org.freedesktop.portal.Desktop',
+          path: DBusObjectPath('/org/freedesktop/portal/desktop'),
+        );
+    return WakelockPlusLinuxPlugin._internal(dbusClient, remoteObject);
   }
+
+  WakelockPlusLinuxPlugin._internal(this._client, this._object);
+
+  final DBusClient _client;
+  final DBusRemoteObject _object;
+  DBusObjectPath? _requestHandle;
 
   Future<String> get _appName =>
       PackageInfo.fromPlatform().then((info) => info.appName);
@@ -37,25 +43,37 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
   @override
   Future<void> toggle({required bool enable}) async {
     if (enable) {
-      _cookie = await _object
+      final appName = await _appName;
+      _requestHandle = await _object
           .callMethod(
-            'org.freedesktop.ScreenSaver',
+            'org.freedesktop.portal.Inhibit',
             'Inhibit',
-            [DBusString(await _appName), const DBusString('wakelock')],
-            replySignature: DBusSignature.uint32,
+            [
+              const DBusString(''),
+              const DBusUint32(8),
+              DBusDict.stringVariant({
+                'reason': DBusString('$appName: wakelock active'),
+              }),
+            ],
+            replySignature: DBusSignature('o'),
           )
-          .then((response) => response.returnValues.single.asUint32());
-    } else if (_cookie != null) {
-      await _object.callMethod(
-        'org.freedesktop.ScreenSaver',
-        'UnInhibit',
-        [DBusUint32(_cookie!)],
+          .then((response) => response.returnValues.single.asObjectPath());
+    } else if (_requestHandle != null) {
+      final requestObject = DBusRemoteObject(
+        _client,
+        name: 'org.freedesktop.portal.Desktop',
+        path: _requestHandle!,
+      );
+      await requestObject.callMethod(
+        'org.freedesktop.portal.Request',
+        'Close',
+        [],
         replySignature: DBusSignature.empty,
       );
-      _cookie = null;
+      _requestHandle = null;
     }
   }
 
   @override
-  Future<bool> get enabled async => _cookie != null;
+  Future<bool> get enabled async => _requestHandle != null;
 }
