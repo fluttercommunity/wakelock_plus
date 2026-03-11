@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: axel-op/dart-package-analyzer@v3
         with:
           relativePath: ${{ matrix.package }}

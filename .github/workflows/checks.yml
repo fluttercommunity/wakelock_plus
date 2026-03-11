@@ -18,97 +18,310 @@ on:
 
 jobs:
   analyze:
-    timeout-minutes: 11
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     name: ${{ matrix.package }} analysis on ${{ matrix.channel }}
     strategy:
       matrix:
-        channel:
-          - 'stable'
-          - 'beta'
-        package:
-          - 'wakelock_plus'
-          - 'wakelock_plus_platform_interface'
+        channel: [stable, beta]
+        package: [wakelock_plus, wakelock_plus_platform_interface]
       fail-fast: false
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.channel }}
-      - run: flutter pub get
-        working-directory: ${{ matrix.package }}
-      - name: Check format
-        working-directory: ${{ matrix.package }}
-        run: dart format . --set-exit-if-changed
-        # Ignoring formatting issues for now, as we're still supporting versions of Flutter below
-        # 3.29.
-        # Once the minimum supported version is 3.29 or later, we can enforce this on more recent
-        # versions.
-        continue-on-error: true
-      - run: flutter analyze
+
+      - name: Install dependencies
+        run: flutter pub get
         working-directory: ${{ matrix.package }}
 
-  test:
-    timeout-minutes: 30
-    # Using macOS 13 Ventura due to https://github.com/flutter/flutter/issues/118469
-    runs-on: macos-13
-    name: ${{ matrix.package }} testing on ${{ matrix.channel }} with ${{ matrix.device }}
+      - name: Check format
+        # We use --set-exit-if-changed to ensure CI fails if code isn't formatted
+        # according to dart style
+        run: dart format . --set-exit-if-changed
+        working-directory: ${{ matrix.package }}
+        continue-on-error: true
+
+      - name: Analyze
+        run: flutter analyze
+        working-directory: ${{ matrix.package }}
+
+  test_unit_interface:
+    runs-on: ubuntu-latest
+    name: Platform Interface Unit Tests
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      # Unit tests for the interface are separated to run on fast, cheap Linux runners
+      # as they do not require a physical device or simulator.
+      - name: Run unit tests
+        run: |
+          flutter pub get
+          flutter test
+        working-directory: wakelock_plus_platform_interface
+
+  # --- ANDROID JOBS ---
+
+  android_example_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Android APK
+        run: |
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build apk --debug --target=./lib/main.dart
+
+  android_integration_test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
       matrix:
-        device:
-          - 'iPhone 14 Pro Simulator (17.2)'
-          - 'iPhone 14 Pro Max Simulator (17.2)'
-        channel:
-          - 'stable'
-          - 'beta'
-        package:
-          - 'wakelock_plus'
-          - 'wakelock_plus_platform_interface'
+        # Matrix covers Min SDK (24), common mid-range versions, and latest (35)
+        # to ensure broad compatibility across the Android ecosystem.
+        api-level: [24, 28, 31, 33, 35]
       fail-fast: false
-
+    name: Android Integration (API ${{ matrix.api-level }})
     steps:
-      - name: Start iOS simulator
-        if: matrix.package == 'wakelock_plus'
-        # Using gawk to be able to use my regex to separate the IDs from the device names
-        # (because my awk skills suck) to then pipe that to awk to find the right device.
-        run: |
-          # Work around an upstream issue with the runner image:
-          # https://github.com/actions/runner-images/issues/8500
-          brew upgrade || brew link --overwrite python@3.12
-          brew install gawk
-          xcrun xctrace list devices
-          UDID=$(
-            xcrun xctrace list devices |
-            gawk 'match($0, /(.+) \(([^.]*)\)/, a) { printf "%s,%s\n", a[1], a[2] }' |
-            awk -F ',' -v 'device=${{ matrix.device }}' '$1 == device { print $2 }'
-          )
-          xcrun simctl boot "${UDID:?simulator not found}"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.channel }}
-      - run: flutter pub get
-        working-directory: ${{ matrix.package }}
-      - name: Run unit tests (tester)
-        if: matrix.package == 'wakelock_plus'
-        run: flutter test
-        working-directory: ${{ matrix.package }}
-      # For some reason, Web tests are currently not working.
-      # - name: Run unit tests (chrome)
-      #   if: matrix.package == 'wakelock_plus'
-      #   run: |
-      #     flutter config --enable-web
-      #     flutter test --platform chrome
-      #   working-directory: ${{ matrix.package }}
-      - name: Integration tests on iOS
-        if: matrix.package == 'wakelock_plus'
+          channel: stable
+
+      - name: Enable KVM
+        # Linux runners require KVM (Kernel-based Virtual Machine) to be enabled
+        # to run Android emulators with hardware acceleration for acceptable CI performance.
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Integration Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          # Swiftshader is used for software-based GPU acceleration in headless environments
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: wakelock_plus/example
+          script: |
+            flutter drive \
+              --driver=test_driver/integration_test.dart \
+              --target=integration_test/wakelock_plus_test.dart
+
+  # --- IOS JOBS ---
+
+  ios_example_build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build iOS
         run: |
           cd wakelock_plus/example
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
-      - name: Integration tests on macOS
-        if: matrix.package == 'wakelock_plus'
+          flutter pub get
+          flutter build ios --no-codesign --debug --target=./lib/main.dart
+
+  ios_integration_test:
+    # Per requirements: macOS-26 runner is required to access the iPhone 17 simulator environment
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Start iOS simulator
+        # Using the standard plus_plugins action to handle the simulator lifecycle
+        uses: futureware-tech/simulator-action@v5
+        with:
+          model: 'iPhone 17'
+
+      - name: Run Integration Tests
         run: |
           cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- MACOS JOBS ---
+
+  macos_example_build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build macOS
+        run: |
           flutter config --enable-macos-desktop
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart -d macos
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build macos --debug --target=./lib/main.dart
+
+  macos_integration_test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Run Integration Tests
+        run: |
+          flutter config --enable-macos-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            -d macos \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- LINUX JOBS ---
+
+  linux_example_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - name: Build Linux
+        run: |
+          flutter config --enable-linux-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build linux --debug --target=./lib/main.dart
+
+  linux_integration_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        # Flutter Linux desktop requires specific C++ and GTK development headers to compile.
+        # xvfb provides a virtual display for headless environments.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+
+      - name: Run Integration Tests
+        # xvfb-run (X Virtual Frame Buffer) is critical for Linux CI.
+        # It creates a virtual display in memory so that the Flutter application can
+        # initialize its UI/GPU context in a headless environment without a monitor.
+        run: |
+          flutter config --enable-linux-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          xvfb-run flutter drive \
+            -d linux \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- WINDOWS JOBS ---
+
+  windows_example_build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Windows
+        run: |
+          flutter config --enable-windows-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build windows --debug --target=./lib/main.dart
+
+  windows_integration_test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Run Integration Tests
+        run: |
+          flutter config --enable-windows-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            -d windows \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- WEB JOBS ---
+
+  web_example_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Build Web
+        run: |
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build web --debug --target=./lib/main.dart
+
+  web_integration_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install Web Dependencies
+        # xvfb is required for a virtual display context, and chromium-chromedriver
+        # is the bridge between the test driver and the browser.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb chromium-chromedriver
+
+      - name: Run Integration Tests
+        # Following plus_plugins standard:
+        # 1. Start virtual framebuffer (Xvfb) for Chrome to run in.
+        # 2. Start chromedriver on port 4444.
+        # 3. Use -d chrome to allow driver to control the browser instance.
+        run: |
+          export DISPLAY=:99
+          Xvfb $DISPLAY -screen 0 1024x768x16 &
+          sleep 5 # Give xvfb some time to start.
+
+          chromedriver --port=4444 &
+          sleep 2 # Give chromedriver time to start.
+
+          flutter config --enable-web
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            -d chrome \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart \
+            --dart-define=CI=true
