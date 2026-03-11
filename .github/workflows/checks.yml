@@ -279,11 +279,12 @@ android_integration_test:
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb dbus-x11
 
       - name: Run Integration Tests
+        # Wrap in dbus-run-session to provide the org.freedesktop.ScreenSaver service bus
         run: |
           flutter config --enable-linux-desktop
           cd wakelock_plus/example
           flutter pub get
-          xvfb-run flutter drive \
+          xvfb-run dbus-run-session -- flutter drive \
             -d linux \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart
@@ -369,15 +370,20 @@ android_integration_test:
           export DISPLAY=:99
           Xvfb $DISPLAY -screen 0 1024x768x16 &
           sleep 5 
-
+  
           chromedriver --port=4444 &
           sleep 2 
-
+  
           flutter config --enable-web
           cd wakelock_plus/example
           flutter pub get
+          
+          # We use a timeout or ensure the process is killed if it hangs after "All tests passed!"
+          # In many CI environments, adding --no-build if already built helps, 
+          # but here we ensure the drive command exits.
           flutter drive \
             -d chrome \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart \
-            --dart-define=CI=true
+            --dart-define=CI=true \
+            --no-keep-app-running
