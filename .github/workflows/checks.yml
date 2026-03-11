@@ -114,43 +114,40 @@ jobs:
           flutter pub get
           flutter build apk --debug --target=./lib/main.dart
 
-  android_integration_test:
-    needs: setup_matrix
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      matrix:
-        flutter_version: [stable]
-        api-level: [24, 28, 31, 33, 35]
-      fail-fast: false
-    name: Android Integration (API ${{ matrix.api-level }})
-    steps:
-      - uses: actions/checkout@v6
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ matrix.flutter_version }}
+android_integration_test:
+  needs: setup_matrix
+  runs-on: ubuntu-latest
+  timeout-minutes: 45
+  strategy:
+    matrix:
+      flutter_version: [stable]
+      api-level: [24, 28, 31, 33, 35]
+    fail-fast: false
+  name: Android Integration (API ${{ matrix.api-level }})
+  steps:
+    - uses: actions/checkout@v6
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ matrix.flutter_version }}
 
-      - name: Enable KVM
-        # Linux runners require KVM to run Android emulators with hardware acceleration
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+    - name: Enable KVM
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
 
-      - name: Run Integration Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          working-directory: wakelock_plus/example
-          script: |
-            flutter drive \
-              --driver=test_driver/integration_test.dart \
-              --target=integration_test/wakelock_plus_test.dart
+    - name: Run Integration Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        target: google_apis
+        arch: x86_64
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        working-directory: wakelock_plus/example
+        # We use a single line here because the emulator-runner's script block often misinterprets backslashes
+        script: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
 
   # --- IOS JOBS ---
 
@@ -276,9 +273,10 @@ jobs:
           flutter-version: ${{ matrix.flutter_version }}
 
       - name: Install dependencies
+        # dbus-x11 provides dbus-run-session, which is required for plugins interacting with D-Bus
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb dbus-x11
 
       - name: Run Integration Tests
         run: |
@@ -323,14 +321,12 @@ jobs:
           flutter-version: ${{ matrix.flutter_version }}
 
       - name: Run Integration Tests
+        # We use a single line here to prevent PowerShell ParserErrors
         run: |
           flutter config --enable-windows-desktop
           cd wakelock_plus/example
           flutter pub get
-          flutter drive \
-            -d windows \
-            --driver=test_driver/integration_test.dart \
-            --target=integration_test/wakelock_plus_test.dart
+          flutter drive -d windows --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
 
   # --- WEB JOBS ---
 
