@@ -20,7 +20,7 @@ env:
   # Minimum version supported by the package
   FLUTTER_VERSION_MINIMUM_DEFAULT: "3.38.10"
   # Moving latest stable
-  FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT: "stable"
+  FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT: "3.x"
   # Moving beta channel
   FLUTTER_VERSION_BETA_CHANNEL_DEFAULT: "beta"
 
