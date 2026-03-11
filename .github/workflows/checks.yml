@@ -16,29 +16,54 @@ on:
       - '**/integration_test/**'
       - '.github/workflows/checks.yml'
 
+env:
+  # Minimum version supported by the package
+  FLUTTER_VERSION_MINIMUM_DEFAULT: "3.38.10"
+  # Moving latest stable
+  FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT: "stable"
+  # Moving beta channel
+  FLUTTER_VERSION_BETA_CHANNEL_DEFAULT: "beta"
+
 jobs:
+  setup_matrix:
+    name: Determine Flutter Test Versions
+    runs-on: ubuntu-latest
+    outputs:
+      flutter_versions_json: ${{ steps.set_versions.outputs.versions_json }}
+    steps:
+      - name: Determine Flutter versions
+        id: set_versions
+        run: |
+          MIN="${{ env.FLUTTER_VERSION_MINIMUM_DEFAULT }}"
+          STABLE="${{ env.FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT }}"
+          BETA="${{ env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}"
+          
+          # Create JSON array: ["3.38.10", "stable", "beta"]
+          VERSIONS_JSON=$(jq -c --null-input '$ARGS.positional' --args "$MIN" "$STABLE" "$BETA")
+          echo "versions_json=$VERSIONS_JSON" >> $GITHUB_OUTPUT
+
   analyze:
+    needs: setup_matrix
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    name: ${{ matrix.package }} analysis on ${{ matrix.channel }}
+    name: ${{ matrix.package }} analysis on ${{ matrix.flutter_version }}
     strategy:
       matrix:
-        channel: [stable, beta]
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
         package: [wakelock_plus, wakelock_plus_platform_interface]
       fail-fast: false
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.channel }}
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Install dependencies
         run: flutter pub get
         working-directory: ${{ matrix.package }}
 
       - name: Check format
-        # We use --set-exit-if-changed to ensure CI fails if code isn't formatted
-        # according to dart style
+        # Ensure CI fails if code isn't formatted according to dart style
         run: dart format . --set-exit-if-changed
         working-directory: ${{ matrix.package }}
         continue-on-error: true
@@ -47,32 +72,42 @@ jobs:
         run: flutter analyze
         working-directory: ${{ matrix.package }}
 
-  test_unit_interface:
+  unit_tests:
+    needs: setup_matrix
     runs-on: ubuntu-latest
-    name: Platform Interface Unit Tests
+    name: ${{ matrix.package }} unit tests on ${{ matrix.flutter_version }}
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+        package: [wakelock_plus, wakelock_plus_platform_interface]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
-      # Unit tests for the interface are separated to run on fast, cheap Linux runners
-      # as they do not require a physical device or simulator.
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ matrix.package }}
+
       - name: Run unit tests
-        run: |
-          flutter pub get
-          flutter test
-        working-directory: wakelock_plus_platform_interface
+        run: flutter test
+        working-directory: ${{ matrix.package }}
 
   # --- ANDROID JOBS ---
 
   android_example_build:
+    needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Build Android APK
         run: |
           cd wakelock_plus/example
@@ -80,12 +115,12 @@ jobs:
           flutter build apk --debug --target=./lib/main.dart
 
   android_integration_test:
+    needs: setup_matrix
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       matrix:
-        # Matrix covers Min SDK (24), common mid-range versions, and latest (35)
-        # to ensure broad compatibility across the Android ecosystem.
+        flutter_version: [stable]
         api-level: [24, 28, 31, 33, 35]
       fail-fast: false
     name: Android Integration (API ${{ matrix.api-level }})
@@ -93,11 +128,10 @@ jobs:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Enable KVM
-        # Linux runners require KVM (Kernel-based Virtual Machine) to be enabled
-        # to run Android emulators with hardware acceleration for acceptable CI performance.
+        # Linux runners require KVM to run Android emulators with hardware acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -110,7 +144,6 @@ jobs:
           target: google_apis
           arch: x86_64
           force-avd-creation: false
-          # Swiftshader is used for software-based GPU acceleration in headless environments
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: wakelock_plus/example
@@ -122,12 +155,16 @@ jobs:
   # --- IOS JOBS ---
 
   ios_example_build:
+    needs: setup_matrix
     runs-on: macos-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Build iOS
         run: |
           cd wakelock_plus/example
@@ -135,17 +172,19 @@ jobs:
           flutter build ios --no-codesign --debug --target=./lib/main.dart
 
   ios_integration_test:
-    # Per requirements: macOS-26 runner is required to access the iPhone 17 simulator environment
+    needs: setup_matrix
     runs-on: macos-26
     timeout-minutes: 45
+    strategy:
+      matrix:
+        flutter_version: [stable]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Start iOS simulator
-        # Using the standard plus_plugins action to handle the simulator lifecycle
         uses: futureware-tech/simulator-action@v5
         with:
           model: 'iPhone 17'
@@ -161,12 +200,16 @@ jobs:
   # --- MACOS JOBS ---
 
   macos_example_build:
+    needs: setup_matrix
     runs-on: macos-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Build macOS
         run: |
           flutter config --enable-macos-desktop
@@ -175,12 +218,16 @@ jobs:
           flutter build macos --debug --target=./lib/main.dart
 
   macos_integration_test:
+    needs: setup_matrix
     runs-on: macos-15
+    strategy:
+      matrix:
+        flutter_version: [stable]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Run Integration Tests
         run: |
@@ -195,12 +242,16 @@ jobs:
   # --- LINUX JOBS ---
 
   linux_example_build:
+    needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -213,24 +264,23 @@ jobs:
           flutter build linux --debug --target=./lib/main.dart
 
   linux_integration_test:
+    needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: [stable]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Install dependencies
-        # Flutter Linux desktop requires specific C++ and GTK development headers to compile.
-        # xvfb provides a virtual display for headless environments.
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
 
       - name: Run Integration Tests
-        # xvfb-run (X Virtual Frame Buffer) is critical for Linux CI.
-        # It creates a virtual display in memory so that the Flutter application can
-        # initialize its UI/GPU context in a headless environment without a monitor.
         run: |
           flutter config --enable-linux-desktop
           cd wakelock_plus/example
@@ -243,12 +293,16 @@ jobs:
   # --- WINDOWS JOBS ---
 
   windows_example_build:
+    needs: setup_matrix
     runs-on: windows-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Build Windows
         run: |
           flutter config --enable-windows-desktop
@@ -257,12 +311,16 @@ jobs:
           flutter build windows --debug --target=./lib/main.dart
 
   windows_integration_test:
+    needs: setup_matrix
     runs-on: windows-latest
+    strategy:
+      matrix:
+        flutter_version: [stable]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Run Integration Tests
         run: |
@@ -277,12 +335,16 @@ jobs:
   # --- WEB JOBS ---
 
   web_example_build:
+    needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
       - name: Build Web
         run: |
           cd wakelock_plus/example
@@ -290,32 +352,30 @@ jobs:
           flutter build web --debug --target=./lib/main.dart
 
   web_integration_test:
+    needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: [stable]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: ${{ matrix.flutter_version }}
 
       - name: Install Web Dependencies
-        # xvfb is required for a virtual display context, and chromium-chromedriver
-        # is the bridge between the test driver and the browser.
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb chromium-chromedriver
 
       - name: Run Integration Tests
-        # Following plus_plugins standard:
-        # 1. Start virtual framebuffer (Xvfb) for Chrome to run in.
-        # 2. Start chromedriver on port 4444.
-        # 3. Use -d chrome to allow driver to control the browser instance.
         run: |
           export DISPLAY=:99
           Xvfb $DISPLAY -screen 0 1024x768x16 &
-          sleep 5 # Give xvfb some time to start.
+          sleep 5 
 
           chromedriver --port=4444 &
-          sleep 2 # Give chromedriver time to start.
+          sleep 2 
 
           flutter config --enable-web
           cd wakelock_plus/example
