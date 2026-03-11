@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:wakelock_plus_platform_interface/messages.g.dart';
 import 'package:wakelock_plus_platform_interface/src/method_channel_wakelock_plus.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
@@ -27,24 +28,26 @@ void main() {
 
   group('$WakelockPlusPlatformInterface', () {
     test('$MethodChannelWakelockPlus() is the default instance', () {
-      expect(WakelockPlusPlatformInterface.instance,
-          isInstanceOf<MethodChannelWakelockPlus>());
+      expect(
+        WakelockPlusPlatformInterface.instance,
+        isInstanceOf<MethodChannelWakelockPlus>(),
+      );
     });
 
     test('Cannot be implemented with `implements`', () {
       expect(() {
         WakelockPlusPlatformInterface.instance =
-            const ImplementsWakelockPlusPlatformInterface(false);
-      }, throwsA(isInstanceOf<NoSuchMethodError>()));
+            ImplementsWakelockPlusPlatformInterface();
+      }, throwsA(isA<AssertionError>()));
     });
 
     test('Can be mocked with `implements`', () {
       WakelockPlusPlatformInterface.instance =
-          const ImplementsWakelockPlusPlatformInterface(true);
+          WakelockPlusPlatformInterfaceMock();
     });
 
     test('Can be extended', () {
-      WakelockPlusPlatformInterface.instance = ExtendsVideoPlayerPlatform();
+      WakelockPlusPlatformInterface.instance = ExtendsWakelockPlusPlatform();
     });
   });
 
@@ -79,17 +82,29 @@ void main() {
   });
 }
 
+/// This class should fail verification because it uses `implements`
+/// and does NOT use [MockPlatformInterfaceMixin].
 class ImplementsWakelockPlusPlatformInterface
     implements WakelockPlusPlatformInterface {
-  const ImplementsWakelockPlusPlatformInterface(this.mocked);
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
-  final bool mocked;
+/// This class should pass verification because it uses [MockPlatformInterfaceMixin].
+class WakelockPlusPlatformInterfaceMock
+    with MockPlatformInterfaceMixin
+    implements WakelockPlusPlatformInterface {
+  @override
+  Future<bool> get enabled => throw UnimplementedError();
 
   @override
-  dynamic noSuchMethod(Invocation invocation) {
-    if (invocation.memberName == #isMock && mocked) return true;
-    throw NoSuchMethodError.withInvocation(this, invocation);
+  bool get isMock => throw UnimplementedError();
+
+  @override
+  Future<void> toggle({required bool enable}) {
+    throw UnimplementedError();
   }
 }
 
-class ExtendsVideoPlayerPlatform extends WakelockPlusPlatformInterface {}
+/// This class should pass verification because it uses `extends`.
+class ExtendsWakelockPlusPlatform extends WakelockPlusPlatformInterface {}
