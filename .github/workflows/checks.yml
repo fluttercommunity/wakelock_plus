@@ -15,8 +15,6 @@ on:
       - '**/assets/**'
       - '**/integration_test/**'
       - '.github/workflows/checks.yml'
-    paths-ignore:
-      - '**.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
