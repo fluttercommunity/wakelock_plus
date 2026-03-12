@@ -3,18 +3,18 @@ name: checks
 on:
   workflow_dispatch:
   pull_request:
-  branches:
-   - main
-  paths:
-   - '**/lib/**'
-   - '**/android/**'
-   - '**/ios/**'
-   - '**/pubspec.yaml'
-   - '**/test/**'
-   - '**/test_driver/**'
-   - '**/assets/**'
-   - '**/integration_test/**'
-   - '.github/workflows/checks.yml'
+    branches:
+     - main
+    paths:
+     - '**/lib/**'
+     - '**/android/**'
+     - '**/ios/**'
+     - '**/pubspec.yaml'
+     - '**/test/**'
+     - '**/test_driver/**'
+     - '**/assets/**'
+     - '**/integration_test/**'
+     - '.github/workflows/checks.yml'
 
 env:
   # The version of Flutter to use should use the minimum Dart SDK version supported by the package.
