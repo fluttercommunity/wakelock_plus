@@ -4,17 +4,23 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-     - main
+      - main
     paths:
-     - '**/lib/**'
-     - '**/android/**'
-     - '**/ios/**'
-     - '**/pubspec.yaml'
-     - '**/test/**'
-     - '**/test_driver/**'
-     - '**/assets/**'
-     - '**/integration_test/**'
-     - '.github/workflows/checks.yml'
+      - '**/lib/**'
+      - '**/android/**'
+      - '**/ios/**'
+      - '**/pubspec.yaml'
+      - '**/test/**'
+      - '**/test_driver/**'
+      - '**/assets/**'
+      - '**/integration_test/**'
+      - '.github/workflows/checks.yml'
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   # The version of Flutter to use should use the minimum Dart SDK version supported by the package.
@@ -60,6 +66,8 @@ jobs:
           # Logic: If version contains a dot or 'x', it's a version/3.x. Otherwise (beta), it's a channel.
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Install dependencies
         # --no-example is crucial here so that we only get the library's dependencies
@@ -95,6 +103,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Install dependencies
         run: flutter pub get --no-example
@@ -124,6 +134,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build Android APK
         run: |
           cd wakelock_plus/example
@@ -144,13 +156,15 @@ jobs:
         # 35: Android 15 (Latest Stable)
         api-level: [24, 28, 31, 33, 35]
       fail-fast: false
-    name: Android Integration (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
+    name: Android Integration Test (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Enable KVM
         # Linux runners require KVM to run Android emulators with hardware acceleration
@@ -188,6 +202,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build iOS
         run: |
           cd wakelock_plus/example
@@ -202,13 +218,15 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-    name: iOS Integration (${{ matrix.flutter_version }})
+    name: iOS Integration Test (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Start iOS simulator
         # Using standard simulator-action to handle the simulator lifecycle on macOS-26
@@ -240,6 +258,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build macOS
         run: |
           flutter config --enable-macos-desktop
@@ -254,13 +274,15 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-    name: macOS Integration (${{ matrix.flutter_version }})
+    name: macOS Integration Test (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Run Integration Tests
         run: |
@@ -292,6 +314,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build Linux
         run: |
           flutter config --enable-linux-desktop
@@ -307,13 +331,15 @@ jobs:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
       fail-fast: false
-    name: Linux Integration (${{ matrix.flutter_version }})
+    name: Linux Integration Test (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Install dependencies
         # dbus-x11 and xvfb are critical for plugins that interact with ScreenSaver services headlessly
@@ -370,6 +396,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build Windows
         run: |
           flutter config --enable-windows-desktop
@@ -384,13 +412,15 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-    name: Windows Integration (${{ matrix.flutter_version }})
+    name: Windows Integration Test (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Run Integration Tests
         # Use single line to prevent PowerShell ParserErrors with backslashes
@@ -416,6 +446,8 @@ jobs:
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
       - name: Build Web
         run: |
           cd wakelock_plus/example
@@ -429,13 +461,15 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-    name: Web Integration (${{ matrix.flutter_version }})
+    name: Web Integration Test (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Install Web Dependencies
         run: |
@@ -447,14 +481,10 @@ jobs:
         run: |
           # 1. Export DISPLAY so chromedriver knows which screen to use
           export DISPLAY=:99
-
           # 2. Start Xvfb manually with the resolution used by plus_plugins
           Xvfb $DISPLAY -screen 0 1024x768x16 &
-
           # 3. Start chromedriver on the port expected by Flutter's web driver
-          # Note: We omit --url-base=/wd/hub to support modern W3C protocol
           chromedriver --port=4444 &
-
           # 4. Give services time to initialize
           sleep 5
 
