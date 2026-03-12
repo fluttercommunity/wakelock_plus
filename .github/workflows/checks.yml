@@ -231,6 +231,9 @@ jobs:
         uses: futureware-tech/simulator-action@v5
         with:
           model: 'iPhone 17'
+          wait_for_boot: true
+          boot_timeout_seconds: 600
+          boot_retries: 5
 
       - name: Run Integration Tests
         run: |
