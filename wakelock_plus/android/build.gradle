@@ -2,14 +2,14 @@ group 'dev.fluttercommunity.plus.wakelock'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.22'
+    ext.kotlin_version = '2.2.0'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.1'
+        classpath 'com.android.tools.build:gradle:8.12.1'
     }
 }
 
@@ -25,7 +25,7 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'dev.fluttercommunity.plus.wakelock'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -45,7 +45,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        // Use flutter.minSdkVersion once the minimum supported Flutter version is 3.35 or higher.
+        minSdkVersion flutter.minSdkVersion
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 

@@ -27,7 +27,9 @@ class WakelockPlusWebPlugin extends WakelockPlusPlatformInterface {
   //
   Future<void> _ensureJsLoaded() async {
     _jsLoaded ??= importJsLibrary(
-        url: 'assets/no_sleep.js', flutterPluginName: 'wakelock_plus');
+      url: 'assets/no_sleep.js',
+      flutterPluginName: 'wakelock_plus',
+    );
     return _jsLoaded;
   }
 

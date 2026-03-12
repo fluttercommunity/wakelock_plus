@@ -2,8 +2,11 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - lib/**.g.dart
-    - test/**.g.dart
+    # Generated files shouldn't really be analyzed. Remove if it becomes a problem.
+    - "**/*.g.dart"
+    - ".git/**" # Exclude private git directory
+    - "build/**" # Exclude generated files in the build directory
+    - ".dart_tool/**" # Exclude Dart tool-generated files
 
 linter:
   rules:

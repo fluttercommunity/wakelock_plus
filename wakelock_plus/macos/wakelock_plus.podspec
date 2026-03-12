@@ -1,6 +1,5 @@
 #
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint wakelock_plus.podspec` to validate before publishing.
+# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
   s.name             = 'wakelock_plus'
@@ -13,10 +12,11 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/fluttercommunity/wakelock_plus/tree/main/packages/wakelock_plus_macos' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files = 'wakelock_plus/Sources/wakelock_plus/**/*.swift'
   s.dependency 'FlutterMacOS'
-
-  s.platform = :osx, '10.11'
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.osx.deployment_target = '10.15'
+  # Flutter.framework does not contain a i386 slice.
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
+  s.resource_bundles = {'wakelock_plus' => ['wakelock_plus/Sources/wakelock_plus/Resources/PrivacyInfo.xcprivacy']}
 end

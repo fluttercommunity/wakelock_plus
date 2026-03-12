@@ -23,7 +23,9 @@ void main() {
 
     test('$WakelockPlusWebPlugin set as default instance', () {
       expect(
-          WakelockPlusPlatformInterface.instance, isA<WakelockPlusWebPlugin>());
+        WakelockPlusPlatformInterface.instance,
+        isA<WakelockPlusWebPlugin>(),
+      );
     });
 
     test('initially disabled', () async {

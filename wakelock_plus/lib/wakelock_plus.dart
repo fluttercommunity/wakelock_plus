@@ -63,9 +63,7 @@ class WakelockPlus {
   /// ```
   ///
   /// You can await the [Future] to wait for the operation to complete.
-  static Future<void> toggle({
-    required bool enable,
-  }) {
+  static Future<void> toggle({required bool enable}) {
     return wakelockPlusPlatformInstance.toggle(enable: enable);
   }
 

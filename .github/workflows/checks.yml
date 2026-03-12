@@ -16,94 +16,498 @@ on:
       - '**/integration_test/**'
       - '.github/workflows/checks.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The version of Flutter to use should use the minimum Dart SDK version supported by the package.
+  # Current minimum (N-1 logic)
+  FLUTTER_VERSION_MINIMUM_DEFAULT: "3.38.10"
+  # Latest 3.x stable
+  FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT: "3.x"
+  # Beta channel support
+  FLUTTER_VERSION_BETA_CHANNEL_DEFAULT: "beta"
+
 jobs:
-  analyze:
-    timeout-minutes: 11
+  setup_matrix:
+    name: Determine Flutter Test Versions
     runs-on: ubuntu-latest
-    name: ${{ matrix.package }} analysis on ${{ matrix.channel }}
-    strategy:
-      matrix:
-        channel:
-          - 'stable'
-          - 'beta'
-        package:
-          - 'wakelock_plus'
-          - 'wakelock_plus_platform_interface'
-      fail-fast: false
-
+    outputs:
+      flutter_versions_json: ${{ steps.set_versions.outputs.versions_json }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ matrix.channel }}
-      - run: flutter pub get
-        working-directory: ${{ matrix.package }}
-      - name: Check format
-        working-directory: ${{ matrix.package }}
-        run: dart format . --set-exit-if-changed
-      - run: flutter analyze
-        working-directory: ${{ matrix.package }}
-
-  test:
-    timeout-minutes: 30
-    # Using macOS 13 Ventura due to https://github.com/flutter/flutter/issues/118469
-    runs-on: macos-13
-    name: ${{ matrix.package }} testing on ${{ matrix.channel }} with ${{ matrix.device }}
-    strategy:
-      matrix:
-        device:
-          - 'iPhone 14 Pro Simulator (17.2)'
-          - 'iPhone 14 Pro Max Simulator (17.2)'
-        channel:
-          - 'stable'
-          - 'beta'
-        package:
-          - 'wakelock_plus'
-          - 'wakelock_plus_platform_interface'
-      fail-fast: false
-
-    steps:
-      - name: Start iOS simulator
-        if: matrix.package == 'wakelock_plus'
-        # Using gawk to be able to use my regex to separate the IDs from the device names
-        # (because my awk skills suck) to then pipe that to awk to find the right device.
+      - name: Determine Flutter versions
+        id: set_versions
         run: |
-          # Work around an upstream issue with the runner image:
-          # https://github.com/actions/runner-images/issues/8500
-          brew upgrade || brew link --overwrite python@3.12
-          brew install gawk
-          xcrun xctrace list devices
-          UDID=$(
-            xcrun xctrace list devices |
-            gawk 'match($0, /(.+) \(([^.]*)\)/, a) { printf "%s,%s\n", a[1], a[2] }' |
-            awk -F ',' -v 'device=${{ matrix.device }}' '$1 == device { print $2 }'
-          )
-          xcrun simctl boot "${UDID:?simulator not found}"
-      - uses: actions/checkout@v4
+          MIN="${{ env.FLUTTER_VERSION_MINIMUM_DEFAULT }}"
+          STABLE="${{ env.FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT }}"
+          BETA="${{ env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}"
+          
+          # Create JSON array: ["3.38.10", "3.x", "beta"]
+          VERSIONS_JSON=$(jq -c --null-input '$ARGS.positional' --args "$MIN" "$STABLE" "$BETA")
+          echo "versions_json=$VERSIONS_JSON" >> $GITHUB_OUTPUT
+
+  analyze:
+    needs: setup_matrix
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    name: ${{ matrix.package }} analysis on ${{ matrix.flutter_version }}
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+        package: [wakelock_plus, wakelock_plus_platform_interface]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.channel }}
-      - run: flutter pub get
+          # Logic: If version contains a dot or 'x', it's a version/3.x. Otherwise (beta), it's a channel.
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install dependencies
+        # --no-example is crucial here so that we only get the library's dependencies
+        run: flutter pub get --no-example
         working-directory: ${{ matrix.package }}
-      - name: Run unit tests (tester)
-        if: matrix.package == 'wakelock_plus'
+
+      - name: Check format
+        # Ensure CI fails if code isn't formatted according to dart style
+        run: dart format . --set-exit-if-changed
+        working-directory: ${{ matrix.package }}
+        # Only skip errors if we're on the minimum default version,
+        # or if we're running the beta channel.
+        # The only version that matters as far as formatting is concerned is the latest version.
+        continue-on-error: ${{ matrix.flutter_version == env.FLUTTER_VERSION_MINIMUM_DEFAULT || matrix.flutter_version == env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}
+
+      - name: Analyze
+        # We explicitly analyze only lib and test to ignore the example app's integration tests
+        run: flutter analyze lib test
+        working-directory: ${{ matrix.package }}
+
+  unit_tests:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    name: ${{ matrix.package }} unit tests on ${{ matrix.flutter_version }}
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+        package: [wakelock_plus, wakelock_plus_platform_interface]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install dependencies
+        run: flutter pub get --no-example
+        working-directory: ${{ matrix.package }}
+
+      - name: Run unit tests
         run: flutter test
         working-directory: ${{ matrix.package }}
-      # For some reason, Web tests are currently not working.
-      # - name: Run unit tests (chrome)
-      #   if: matrix.package == 'wakelock_plus'
-      #   run: |
-      #     flutter config --enable-web
-      #     flutter test --platform chrome
-      #   working-directory: ${{ matrix.package }}
-      - name: Integration tests on iOS
-        if: matrix.package == 'wakelock_plus'
+
+  # --- ANDROID ---
+
+  android_example_build:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Android Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install dependencies (Linux build hosts)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build Android APK
         run: |
           cd wakelock_plus/example
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
-      - name: Integration tests on macOS
-        if: matrix.package == 'wakelock_plus'
+          flutter pub get
+          flutter build apk --debug --target=./lib/main.dart
+
+  android_integration_test:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+        # 24: Min SDK (Nougat)
+        # 28: Pre-Scoped Storage / Legacy (Pie)
+        # 31: Android 12 (S) - Significant splash screen and permission changes
+        # 33: Android 13 (T) - Granular media permissions
+        # 35: Android 15 (Latest Stable)
+        api-level: [24, 28, 31, 33, 35]
+      fail-fast: false
+    name: Android Integration Test (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Enable KVM
+        # Linux runners require KVM to run Android emulators with hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Integration Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: wakelock_plus/example
+          # We use a single line here because the emulator-runner's script block often misinterprets backslashes
+          script: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
+
+  # --- IOS ---
+
+  ios_example_build:
+    needs: setup_matrix
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: iOS Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build iOS
         run: |
           cd wakelock_plus/example
+          flutter pub get
+          flutter build ios --no-codesign --debug --target=./lib/main.dart
+
+  ios_integration_test:
+    needs: setup_matrix
+    # Per requirements: macOS-26 runner is required to access the iPhone 17 simulator environment
+    runs-on: macos-26
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: iOS Integration Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Start iOS simulator
+        # Using standard simulator-action to handle the simulator lifecycle on macOS-26
+        uses: futureware-tech/simulator-action@v5
+        with:
+          model: 'iPhone 17'
+          wait_for_boot: true
+          boot_timeout_seconds: 600
+          boot_retries: 5
+
+      - name: Run Integration Tests
+        run: |
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- MACOS ---
+
+  macos_example_build:
+    needs: setup_matrix
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: macOS Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build macOS
+        run: |
           flutter config --enable-macos-desktop
-          flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart -d macos
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build macos --debug --target=./lib/main.dart
+
+  macos_integration_test:
+    needs: setup_matrix
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: macOS Integration Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Run Integration Tests
+        run: |
+          flutter config --enable-macos-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive \
+            -d macos \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart
+
+  # --- LINUX ---
+
+  linux_example_build:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Linux Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build Linux
+        run: |
+          flutter config --enable-linux-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build linux --debug --target=./lib/main.dart
+
+  linux_integration_test:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+      fail-fast: false
+    name: Linux Integration Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install dependencies
+        # dbus-x11 and xvfb are critical for plugins that interact with ScreenSaver services headlessly
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev xvfb dbus-x11 \
+            python3-dbus python3-gi
+
+      - name: Run Integration Tests
+        run: |
+          flutter config --enable-linux-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          
+          # We use xvfb-run (display) and dbus-run-session (bus).
+          # Inside, we run a Python mock of 'org.freedesktop.ScreenSaver' so the plugin logic succeeds.
+          xvfb-run dbus-run-session bash -c "
+          python3 -c \"
+          import dbus, dbus.service
+          from dbus.mainloop.glib import DBusGMainLoop
+          from gi.repository import GLib
+          class Mock(dbus.service.Object):
+              def __init__(self):
+                  bus_name = dbus.service.BusName('org.freedesktop.ScreenSaver', bus=dbus.SessionBus())
+                  dbus.service.Object.__init__(self, bus_name, '/org/freedesktop/ScreenSaver')
+              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='ss', out_signature='u')
+              def Inhibit(self, a, r): return 1
+              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='u', out_signature='')
+              def UnInhibit(self, c): pass
+          DBusGMainLoop(set_as_default=True)
+          Mock()
+          GLib.MainLoop().run()\" &
+          sleep 5 && \
+          flutter drive \
+            -d linux \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart"
+
+  # --- WINDOWS ---
+
+  windows_example_build:
+    needs: setup_matrix
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Windows Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build Windows
+        run: |
+          flutter config --enable-windows-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build windows --debug --target=./lib/main.dart
+
+  windows_integration_test:
+    needs: setup_matrix
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Windows Integration Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Run Integration Tests
+        # Use single line to prevent PowerShell ParserErrors with backslashes
+        run: |
+          flutter config --enable-windows-desktop
+          cd wakelock_plus/example
+          flutter pub get
+          flutter drive -d windows --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
+
+  # --- WEB ---
+
+  web_example_build:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Web Example Build (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Build Web
+        run: |
+          cd wakelock_plus/example
+          flutter pub get
+          flutter build web --debug --target=./lib/main.dart
+
+  web_integration_test:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Web Integration Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install Web Dependencies
+        run: |
+          sudo apt-get update
+          # Install xvfb and the specific chromium-chromedriver
+          sudo apt-get install -y xvfb chromium-chromedriver
+
+      - name: Start ChromeDriver & Xvfb
+        run: |
+          # 1. Export DISPLAY so chromedriver knows which screen to use
+          export DISPLAY=:99
+          # 2. Start Xvfb manually with the resolution used by plus_plugins
+          Xvfb $DISPLAY -screen 0 1024x768x16 &
+          # 3. Start chromedriver on the port expected by Flutter's web driver
+          chromedriver --port=4444 &
+          # 4. Give services time to initialize
+          sleep 5
+
+      - name: Run Integration Tests
+        run: |
+          # Must re-export DISPLAY in this step as well
+          export DISPLAY=:99
+
+          flutter config --enable-web
+          cd wakelock_plus/example
+          flutter pub get
+
+          # Use timeout to prevent the CI hang common in headless web environments
+          timeout 10m flutter drive \
+            -d chrome \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/wakelock_plus_test.dart \
+            --dart-define=CI=true \
+            --no-keep-app-running || {
+              if [ $? -eq 124 ]; then
+                echo "Flutter drive reached timeout. Process was killed to prevent CI hang."
+              else
+                exit $?
+              fi
+            }

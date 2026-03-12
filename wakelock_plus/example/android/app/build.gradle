@@ -22,8 +22,8 @@ if (flutterVersionName == null) {
 }
 
 android {
-    compileSdk 34
-    ndkVersion "25.1.8937393"
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
     namespace 'dev.fluttercommunity.plus.wakelock_example'
 
     compileOptions {
@@ -44,8 +44,8 @@ android {
         applicationId 'dev.fluttercommunity.plus.wakelock_example'
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk 19
-        targetSdk 34
+        minSdk flutter.minSdkVersion
+        targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

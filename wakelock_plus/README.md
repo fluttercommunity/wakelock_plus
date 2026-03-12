@@ -33,6 +33,30 @@ automatically.
 | Windows  |            ✅            |
 | Linux    |            ✅            |
 
+## Framework and Platform Requirements
+
+* Flutter
+  - Flutter SDK >=3.22.0
+  - Dart SDK >=3.4.0
+* Android
+  - Android API 21 (Lollipop) or higher
+  - Java 17 or higher
+  - Android Gradle Plugin >=8.12.1
+  - Gradle wrapper >=8.13
+* iOS
+  - iOS 12.0 or higher
+* macOS
+  - macOS 10.15 or higher
+* Windows
+  - Windows 7 or higher
+* Linux
+  - gtk+ >= 3.0
+  - glib >= 2.0
+  - gio >= 2.0
+* Web
+  - Modern browsers
+
+
 ## Usage
 
 To use this plugin, follow the [installation guide](https://pub.dev/packages/wakelock_plus/install).
@@ -141,7 +165,7 @@ If this occurs, simply add the NDK version specified in the error message in you
 android {
     // Current version at the time of this writing.
     // Use the version specified by the error message.
-    ndkVersion "25.1.8937393" 
+    ndkVersion flutter.ndkVersion
     //....
 }
 ```
