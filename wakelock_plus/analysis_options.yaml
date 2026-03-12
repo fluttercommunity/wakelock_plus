@@ -7,6 +7,7 @@ analyzer:
     - ".git/**" # Exclude private git directory
     - "build/**" # Exclude generated files in the build directory
     - ".dart_tool/**" # Exclude Dart tool-generated files
+    - "pigeons/**" # Exclude pigeons
 
 linter:
   rules:

@@ -8,8 +8,10 @@ import 'package:web/web.dart';
 
 /// Imports a JS script file from the given [url] given the relative
 /// [flutterPluginName].
-Future<void> importJsLibrary(
-    {required String url, String? flutterPluginName}) async {
+Future<void> importJsLibrary({
+  required String url,
+  String? flutterPluginName,
+}) async {
   if (flutterPluginName == null) {
     return _importJSLibraries([url]);
   } else {

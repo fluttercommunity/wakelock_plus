@@ -18,7 +18,7 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
 
   /// Constructs an instance of [WakelockPlusLinuxPlugin].
   WakelockPlusLinuxPlugin({@visibleForTesting DBusRemoteObject? object})
-      : _object = object ?? _createRemoteObject();
+    : _object = object ?? _createRemoteObject();
 
   final DBusRemoteObject _object;
   int? _cookie;
