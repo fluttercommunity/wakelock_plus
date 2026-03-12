@@ -62,7 +62,7 @@ jobs:
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Install dependencies
-        # --no-example is crucial here because the root package often has a lower min SDK than the example app
+        # --no-example is crucial here so that we only get the library's dependencies
         run: flutter pub get --no-example
         working-directory: ${{ matrix.package }}
 
@@ -70,6 +70,9 @@ jobs:
         # Ensure CI fails if code isn't formatted according to dart style
         run: dart format . --set-exit-if-changed
         working-directory: ${{ matrix.package }}
+        # Only skip errors if we're on the minimum default version,
+        # or if we're running the beta channel.
+        # The only version that matters as far as formatting is concerned is the latest version.
         continue-on-error: ${{ matrix.flutter_version == env.FLUTTER_VERSION_MINIMUM_DEFAULT || matrix.flutter_version == env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}
 
       - name: Analyze
@@ -421,7 +424,8 @@ jobs:
 
   web_integration_test:
     needs: setup_matrix
-    runs-on: ubuntu-latest
+    runs-on:
+      ubuntu-latest
     timeout-minutes: 30
     strategy:
       matrix:
@@ -434,8 +438,10 @@ jobs:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
-      - name: Setup Chrome & Driver
-        uses: nanasess/setup-chromedriver@v2
+      - name: Install Web Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb chromium-chromedriver
 
       - name: Start ChromeDriver & Xvfb
         run: |
