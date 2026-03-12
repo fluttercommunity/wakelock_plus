@@ -424,8 +424,7 @@ jobs:
 
   web_integration_test:
     needs: setup_matrix
-    runs-on:
-      ubuntu-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       matrix:
@@ -441,29 +440,27 @@ jobs:
       - name: Install Web Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb chromium-chromedriver
+          # We only need xvfb. Chrome and Chromedriver are pre-installed on the runner.
+          sudo apt-get install -y xvfb
 
-      - name: Start ChromeDriver & Xvfb
+      - name: Start Xvfb
         run: |
-          # 1. Define the display port
-          export DISPLAY=:99
-          # 2. Start ChromeDriver on the standard port
-          chromedriver --url-base=/wd/hub --port=4444 &
-          # 3. Start Xvfb manually. This creates the 'screen' that 'export DISPLAY' points to.
+          # Start Xvfb manually to create the virtual screen :99
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
           sleep 5
 
       - name: Run Integration Tests
         run: |
-          # We must export DISPLAY again in this step so the Flutter tool knows where the screen is.
+          # Export the display so the browser launched by flutter_drive knows where to render
           export DISPLAY=:99
 
           flutter config --enable-web
           cd wakelock_plus/example
           flutter pub get
 
-          # We DO NOT use 'xvfb-run' here because we already started Xvfb manually above.
-          # 'timeout' is still used to prevent the CI hang.
+          # We do NOT start chromedriver manually. 
+          # flutter_drive will find the system-installed chromedriver and manage it.
+          # 'timeout' is used to forcefully exit the process if it hangs after finishing.
           timeout 10m flutter drive \
             -d chrome \
             --driver=test_driver/integration_test.dart \
