@@ -133,12 +133,12 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-      # 24: Min SDK (Nougat)
-      # 28: Pre-Scoped Storage / Legacy (Pie)
-      # 31: Android 12 (S) - Significant splash screen and permission changes
-      # 33: Android 13 (T) - Granular media permissions
-      # 35: Android 15 (Latest Stable)
-      api-level: [24, 28, 31, 33, 35]
+        # 24: Min SDK (Nougat)
+        # 28: Pre-Scoped Storage / Legacy (Pie)
+        # 31: Android 12 (S) - Significant splash screen and permission changes
+        # 33: Android 13 (T) - Granular media permissions
+        # 35: Android 15 (Latest Stable)
+        api-level: [24, 28, 31, 33, 35]
       fail-fast: false
     name: Android Integration (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
     steps:
