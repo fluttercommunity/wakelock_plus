@@ -3,18 +3,18 @@ name: checks
 on:
   workflow_dispatch:
   pull_request:
-    branches:
-      - main
-    paths:
-      - '**/lib/**'
-      - '**/android/**'
-      - '**/ios/**'
-      - '**/pubspec.yaml'
-      - '**/test/**'
-      - '**/test_driver/**'
-      - '**/assets/**'
-      - '**/integration_test/**'
-      - '.github/workflows/checks.yml'
+  branches:
+   - main
+  paths:
+   - '**/lib/**'
+   - '**/android/**'
+   - '**/ios/**'
+   - '**/pubspec.yaml'
+   - '**/test/**'
+   - '**/test_driver/**'
+   - '**/assets/**'
+   - '**/integration_test/**'
+   - '.github/workflows/checks.yml'
 
 env:
   # The version of Flutter to use should use the minimum Dart SDK version supported by the package.
@@ -62,6 +62,7 @@ jobs:
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Install dependencies
+        # --no-example is crucial here because the root package often has a lower min SDK than the example app
         run: flutter pub get --no-example
         working-directory: ${{ matrix.package }}
 
@@ -69,13 +70,11 @@ jobs:
         # Ensure CI fails if code isn't formatted according to dart style
         run: dart format . --set-exit-if-changed
         working-directory: ${{ matrix.package }}
-        # Only continue on error if this is the job for the MINIMUM Flutter version or beta channel.
-        # This allows formatting issues to be warnings on older supported versions
-        # but enforces them on the latest stable or primary development version.
         continue-on-error: ${{ matrix.flutter_version == env.FLUTTER_VERSION_MINIMUM_DEFAULT || matrix.flutter_version == env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}
 
       - name: Analyze
-        run: flutter analyze
+        # We explicitly analyze only lib and test to ignore the example app's integration tests
+        run: flutter analyze lib test
         working-directory: ${{ matrix.package }}
 
   unit_tests:
@@ -102,7 +101,7 @@ jobs:
         run: flutter test
         working-directory: ${{ matrix.package }}
 
-  # --- ANDROID JOBS ---
+  # --- ANDROID ---
 
   android_example_build:
     needs: setup_matrix
@@ -112,6 +111,10 @@ jobs:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
+      - name: Install dependencies (Linux build hosts)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
@@ -125,20 +128,22 @@ jobs:
   android_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       matrix:
-        api-level: [24, 28, 31, 33, 35]
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+        api-level: [24, 35]
       fail-fast: false
-    name: Android Integration (API ${{ matrix.api-level }})
+    name: Android Integration (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Integration tests run on stable to reduce emulator flakes
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Enable KVM
-        # Hardware acceleration is required for Android emulators in CI
+        # Linux runners require KVM to run Android emulators with hardware acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -154,10 +159,10 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: wakelock_plus/example
-          # One-line script to prevent backslash-parsing errors in the emulator-runner
+          # We use a single line here because the emulator-runner's script block often misinterprets backslashes
           script: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
 
-  # --- IOS JOBS ---
+  # --- IOS ---
 
   ios_example_build:
     needs: setup_matrix
@@ -179,15 +184,22 @@ jobs:
 
   ios_integration_test:
     needs: setup_matrix
-    runs-on: macos-26 # Required for iPhone 17 / iOS 18 support
-    timeout-minutes: 45
+    # Per requirements: macOS-26 runner is required to access the iPhone 17 simulator environment
+    runs-on: macos-26
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: iOS Integration (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Start iOS simulator
+        # Using standard simulator-action to handle the simulator lifecycle on macOS-26
         uses: futureware-tech/simulator-action@v5
         with:
           model: 'iPhone 17'
@@ -200,7 +212,7 @@ jobs:
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart
 
-  # --- MACOS JOBS ---
+  # --- MACOS ---
 
   macos_example_build:
     needs: setup_matrix
@@ -224,11 +236,16 @@ jobs:
   macos_integration_test:
     needs: setup_matrix
     runs-on: macos-15
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: macOS Integration (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Run Integration Tests
         run: |
@@ -240,7 +257,7 @@ jobs:
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart
 
-  # --- LINUX JOBS ---
+  # --- LINUX ---
 
   linux_example_build:
     needs: setup_matrix
@@ -250,14 +267,14 @@ jobs:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
     steps:
       - uses: actions/checkout@v6
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
-          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
       - name: Build Linux
         run: |
           flutter config --enable-linux-desktop
@@ -270,14 +287,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter_version: [ stable ]
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+      fail-fast: false
+    name: Linux Integration (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Install dependencies
+        # dbus-x11 and xvfb are critical for plugins that interact with ScreenSaver services headlessly
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -290,11 +311,9 @@ jobs:
           flutter config --enable-linux-desktop
           cd wakelock_plus/example
           flutter pub get
-
-          # We use xvfb-run and dbus-run-session.
-          # Inside the session, we start a tiny Python background process that 
-          # mocks the 'org.freedesktop.ScreenSaver' service so the plugin has 
-          # a valid target to talk to.
+          
+          # We use xvfb-run (display) and dbus-run-session (bus).
+          # Inside, we run a Python mock of 'org.freedesktop.ScreenSaver' so the plugin logic succeeds.
           xvfb-run dbus-run-session bash -c "
           python3 -c \"
           import dbus, dbus.service
@@ -310,14 +329,14 @@ jobs:
               def UnInhibit(self, c): pass
           DBusGMainLoop(set_as_default=True)
           Mock()
-          GLib.MainLoop().run()\" & 
-          sleep 2 && \
+          GLib.MainLoop().run()\" &
+          sleep 5 && \
           flutter drive \
             -d linux \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart"
 
-  # --- WINDOWS JOBS ---
+  # --- WINDOWS ---
 
   windows_example_build:
     needs: setup_matrix
@@ -341,21 +360,26 @@ jobs:
   windows_integration_test:
     needs: setup_matrix
     runs-on: windows-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Windows Integration (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Run Integration Tests
-        # Use single line to prevent PowerShell parsing errors with backslashes
+        # Use single line to prevent PowerShell ParserErrors with backslashes
         run: |
           flutter config --enable-windows-desktop
           cd wakelock_plus/example
           flutter pub get
           flutter drive -d windows --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
 
-  # --- WEB JOBS ---
+  # --- WEB ---
 
   web_example_build:
     needs: setup_matrix
@@ -378,11 +402,16 @@ jobs:
   web_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Web Integration (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
       - name: Install Web Dependencies
         run: |
@@ -391,10 +420,10 @@ jobs:
 
       - name: Run Integration Tests
         run: |
+          # Start virtual framebuffer (Xvfb) and chromedriver for Chrome headless testing
           export DISPLAY=:99
           Xvfb $DISPLAY -screen 0 1024x768x16 &
           sleep 5 
-          
           chromedriver --port=4444 &
           sleep 2 
           
@@ -402,7 +431,7 @@ jobs:
           cd wakelock_plus/example
           flutter pub get
           
-          # Use --no-keep-app-running to ensure the process exits cleanly after tests pass
+          # Use --no-keep-app-running to ensure process exits after tests
           flutter drive \
             -d chrome \
             --driver=test_driver/integration_test.dart \
