@@ -10,9 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -34,8 +34,11 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -44,43 +47,42 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
-
 /// Message for toggling the wakelock on the platform side.
 class ToggleMessage {
-  ToggleMessage({
-    this.enable,
-  });
+  ToggleMessage({this.enable});
 
   bool? enable;
 
   List<Object?> _toList() {
-    return <Object?>[
-      enable,
-    ];
+    return <Object?>[enable];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ToggleMessage decode(Object result) {
     result as List<Object?>;
-    return ToggleMessage(
-      enable: result[0] as bool?,
-    );
+    return ToggleMessage(enable: result[0] as bool?);
   }
 
   @override
@@ -97,32 +99,26 @@ class ToggleMessage {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Message for reporting the wakelock state from the platform side.
 class IsEnabledMessage {
-  IsEnabledMessage({
-    this.enabled,
-  });
+  IsEnabledMessage({this.enabled});
 
   bool? enabled;
 
   List<Object?> _toList() {
-    return <Object?>[
-      enabled,
-    ];
+    return <Object?>[enabled];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static IsEnabledMessage decode(Object result) {
     result as List<Object?>;
-    return IsEnabledMessage(
-      enabled: result[0] as bool?,
-    );
+    return IsEnabledMessage(enabled: result[0] as bool?);
   }
 
   @override
@@ -139,10 +135,8 @@ class IsEnabledMessage {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -151,10 +145,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is ToggleMessage) {
+    } else if (value is ToggleMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is IsEnabledMessage) {
+    } else if (value is IsEnabledMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -179,9 +173,13 @@ class WakelockPlusApi {
   /// Constructor for [WakelockPlusApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  WakelockPlusApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  WakelockPlusApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -189,25 +187,28 @@ class WakelockPlusApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> toggle(ToggleMessage msg) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.toggle$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[msg]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[msg],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<IsEnabledMessage> isEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.wakelock_plus_platform_interface.WakelockPlusApi.isEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -217,11 +218,10 @@ class WakelockPlusApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as IsEnabledMessage;
   }
 }

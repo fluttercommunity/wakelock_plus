@@ -23,16 +23,12 @@ class _WakelockPlusExampleAppState extends State<WakelockPlusExampleApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Wakelock example app'),
-        ),
+        appBar: AppBar(title: const Text('Wakelock example app')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              const Spacer(
-                flex: 3,
-              ),
+              const Spacer(flex: 3),
               OutlinedButton(
                 onPressed: () {
                   // The following code will enable the wakelock on the device
@@ -56,9 +52,7 @@ class _WakelockPlusExampleAppState extends State<WakelockPlusExampleApp> {
                 },
                 child: const Text('disable wakelock'),
               ),
-              const Spacer(
-                flex: 2,
-              ),
+              const Spacer(flex: 2),
               FutureBuilder(
                 future: WakelockPlus.enabled,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
@@ -71,13 +65,13 @@ class _WakelockPlusExampleAppState extends State<WakelockPlusExampleApp> {
                     return Container();
                   }
 
-                  return Text('The wakelock is currently '
-                      '${data ? 'enabled' : 'disabled'}.');
+                  return Text(
+                    'The wakelock is currently '
+                    '${data ? 'enabled' : 'disabled'}.',
+                  );
                 },
               ),
-              const Spacer(
-                flex: 3,
-              ),
+              const Spacer(flex: 3),
             ],
           ),
         ),

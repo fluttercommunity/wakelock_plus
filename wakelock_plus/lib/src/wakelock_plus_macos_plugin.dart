@@ -21,9 +21,7 @@ class WakelockPlusMacOSPlugin extends WakelockPlusPlatformInterface {
 
   @override
   Future<void> toggle({required bool enable}) async {
-    await _channel.invokeMethod('toggle', <String, dynamic>{
-      'enable': enable,
-    });
+    await _channel.invokeMethod('toggle', <String, dynamic>{'enable': enable});
   }
 
   @override
