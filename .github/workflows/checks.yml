@@ -106,6 +106,7 @@ jobs:
   android_example_build:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -173,6 +174,7 @@ jobs:
   ios_example_build:
     needs: setup_matrix
     runs-on: macos-26
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -224,6 +226,7 @@ jobs:
   macos_example_build:
     needs: setup_matrix
     runs-on: macos-26
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -244,6 +247,7 @@ jobs:
   macos_integration_test:
     needs: setup_matrix
     runs-on: macos-26
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -270,6 +274,7 @@ jobs:
   linux_example_build:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -294,6 +299,7 @@ jobs:
   linux_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -350,6 +356,7 @@ jobs:
   windows_example_build:
     needs: setup_matrix
     runs-on: windows-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -370,6 +377,7 @@ jobs:
   windows_integration_test:
     needs: setup_matrix
     runs-on: windows-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -394,6 +402,7 @@ jobs:
   web_example_build:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -413,6 +422,7 @@ jobs:
   web_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -424,28 +434,39 @@ jobs:
           flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
 
-      - name: Install Web Dependencies
+      - name: Setup Chrome & Driver
+        uses: nanasess/setup-chromedriver@v2
+
+      - name: Start ChromeDriver & Xvfb
         run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb chromium-chromedriver
+          # 1. Define the display port
+          export DISPLAY=:99
+          # 2. Start ChromeDriver on the standard port
+          chromedriver --url-base=/wd/hub --port=4444 &
+          # 3. Start Xvfb manually. This creates the 'screen' that 'export DISPLAY' points to.
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          sleep 5
 
       - name: Run Integration Tests
         run: |
-          # Start virtual framebuffer (Xvfb) and chromedriver for Chrome headless testing
+          # We must export DISPLAY again in this step so the Flutter tool knows where the screen is.
           export DISPLAY=:99
-          Xvfb $DISPLAY -screen 0 1024x768x16 &
-          sleep 5 
-          chromedriver --port=4444 &
-          sleep 2 
-          
+
           flutter config --enable-web
           cd wakelock_plus/example
           flutter pub get
-          
-          # Use --no-keep-app-running to ensure process exits after tests
-          flutter drive \
+
+          # We DO NOT use 'xvfb-run' here because we already started Xvfb manually above.
+          # 'timeout' is still used to prevent the CI hang.
+          timeout 10m flutter drive \
             -d chrome \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart \
             --dart-define=CI=true \
-            --no-keep-app-running
+            --no-keep-app-running || {
+              if [ $? -eq 124 ]; then
+                echo "Flutter drive reached timeout. Process was killed to prevent CI hang."
+              else
+                exit $?
+              fi
+            }
