@@ -28,9 +28,7 @@ String _libraryUrl(String url, String pluginName) {
   }
 
   if (url.startsWith('assets/')) {
-    return ui_web.assetManager.getAssetUrl(
-      'packages/$pluginName/$url',
-    );
+    return ui_web.assetManager.getAssetUrl('packages/$pluginName/$url');
   }
 
   return url;
@@ -76,8 +74,10 @@ Future<void> _importJSLibraries(List<String> libraries) async {
         _loadedLibraries[library] = scriptTag.id;
         completer.complete();
       });
-      scriptTag.onError.first.then((event) =>
-          completer.completeError(Exception('Error loading: $library')));
+      scriptTag.onError.first.then(
+        (event) =>
+            completer.completeError(Exception('Error loading: $library')),
+      );
     }
   }
 
