@@ -72,7 +72,7 @@ jobs:
         # Only continue on error if this is the job for the MINIMUM Flutter version or beta channel.
         # This allows formatting issues to be warnings on older supported versions
         # but enforces them on the latest stable or primary development version.
-        continue-on-error: ${{ matrix.flutter-version == env.FLUTTER_VERSION_MINIMUM_DEFAULT || matrix.channel == env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}
+        continue-on-error: ${{ matrix.flutter_version == env.FLUTTER_VERSION_MINIMUM_DEFAULT || matrix.flutter_version == env.FLUTTER_VERSION_BETA_CHANNEL_DEFAULT }}
 
       - name: Analyze
         run: flutter analyze
