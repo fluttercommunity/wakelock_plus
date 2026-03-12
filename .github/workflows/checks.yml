@@ -268,6 +268,9 @@ jobs:
   linux_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: [ stable ]
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -275,21 +278,44 @@ jobs:
           channel: 'stable'
 
       - name: Install dependencies
-        # dbus-x11 and xvfb are required for plugins that interact with ScreenSaver services headlessly
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb dbus-x11
+          sudo apt-get install -y \
+            clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev xvfb dbus-x11 \
+            python3-dbus python3-gi
 
       - name: Run Integration Tests
         run: |
           flutter config --enable-linux-desktop
           cd wakelock_plus/example
           flutter pub get
-          # xvfb-run provides display, dbus-run-session provides session bus for ScreenSaver inhibition
-          xvfb-run dbus-run-session -- flutter drive \
+
+          # We use xvfb-run and dbus-run-session.
+          # Inside the session, we start a tiny Python background process that 
+          # mocks the 'org.freedesktop.ScreenSaver' service so the plugin has 
+          # a valid target to talk to.
+          xvfb-run dbus-run-session bash -c "
+          python3 -c \"
+          import dbus, dbus.service
+          from dbus.mainloop.glib import DBusGMainLoop
+          from gi.repository import GLib
+          class Mock(dbus.service.Object):
+              def __init__(self):
+                  bus_name = dbus.service.BusName('org.freedesktop.ScreenSaver', bus=dbus.SessionBus())
+                  dbus.service.Object.__init__(self, bus_name, '/org/freedesktop/ScreenSaver')
+              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='ss', out_signature='u')
+              def Inhibit(self, a, r): return 1
+              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='u', out_signature='')
+              def UnInhibit(self, c): pass
+          DBusGMainLoop(set_as_default=True)
+          Mock()
+          GLib.MainLoop().run()\" & 
+          sleep 2 && \
+          flutter drive \
             -d linux \
             --driver=test_driver/integration_test.dart \
-            --target=integration_test/wakelock_plus_test.dart
+            --target=integration_test/wakelock_plus_test.dart"
 
   # --- WINDOWS JOBS ---
 
