@@ -109,6 +109,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Android Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies (Linux build hosts)
@@ -132,7 +133,12 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
-        api-level: [24, 35]
+      # 24: Min SDK (Nougat)
+      # 28: Pre-Scoped Storage / Legacy (Pie)
+      # 31: Android 12 (S) - Significant splash screen and permission changes
+      # 33: Android 13 (T) - Granular media permissions
+      # 35: Android 15 (Latest Stable)
+      api-level: [24, 28, 31, 33, 35]
       fail-fast: false
     name: Android Integration (API ${{ matrix.api-level }} - ${{ matrix.flutter_version }})
     steps:
@@ -166,10 +172,11 @@ jobs:
 
   ios_example_build:
     needs: setup_matrix
-    runs-on: macos-latest
+    runs-on: macos-26
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: iOS Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -216,10 +223,11 @@ jobs:
 
   macos_example_build:
     needs: setup_matrix
-    runs-on: macos-latest
+    runs-on: macos-26
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: macOS Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -235,7 +243,7 @@ jobs:
 
   macos_integration_test:
     needs: setup_matrix
-    runs-on: macos-15
+    runs-on: macos-26
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -265,6 +273,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Linux Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies
@@ -344,6 +353,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Windows Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
@@ -387,6 +397,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Web Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
