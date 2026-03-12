@@ -1,3 +1,14 @@
+## [1.4.0]
+* [#121](https://github.com/fluttercommunity/wakelock_plus/pull/121): Pigeon v26.2 upgrade. Thanks [diegotori](https://github.com/diegotori).
+* **BREAKING CHANGES**:
+  - Dart
+    * Library now requires Dart version `3.10` or higher.
+    * Library now requires Flutter version `3.38` or higher.
+  - iOS
+    * Library now supports at least iOS version `13.0` or higher.
+  - Android
+    * Library now supports at least Android API Level 24 (7.0 Nougat) or higher
+
 ## [1.3.0]
 * [#107](https://github.com/fluttercommunity/wakelock_plus/pull/107): Flutter 3.35 upgrade. Thanks [diegotori](https://github.com/diegotori).
 * **BREAKING CHANGES**:
