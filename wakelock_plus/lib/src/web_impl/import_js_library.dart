@@ -28,6 +28,18 @@ String _libraryUrl(String url, String pluginName) {
   }
 
   if (url.startsWith('assets/')) {
+    if (const bool.fromEnvironment('WEB_PLUGIN_TESTS', defaultValue: false)) {
+      // Flutter tests running on Chrome just need to use the library path
+      // without pre-pending "assets/".
+      //
+      // In other words, don't use the asset manager since it's not currently
+      // supported for Chrome-based Flutter tests.
+      //
+      // See https://github.com/flutter/flutter/issues/159879 for more details.
+      // TODO: Remove the workaround once test asset support is added
+      //       for tests running in Chrome.
+      return 'packages/$pluginName/$url';
+    }
     return ui_web.assetManager.getAssetUrl('packages/$pluginName/$url');
   }
 

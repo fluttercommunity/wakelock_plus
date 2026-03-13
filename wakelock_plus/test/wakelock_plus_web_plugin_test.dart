@@ -8,12 +8,14 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 
 ///
 /// Run these tests with:
-///   flutter run -d chrome test/wakelock_plus_web_plugin_test.dart
+///   flutter test \
+///     --platform chrome \
+///     --dart-define=WEB_PLUGIN_TESTS=true \
+///     test/wakelock_plus_web_plugin_test.dart
 ///
 void main() {
   group('$WakelockPlusWebPlugin', () {
     setUpAll(() async {
-      // todo: the web tests do not work as the JS library import does not work when using flutter run test --platform chrome.
       WakelockPlusPlatformInterface.instance = WakelockPlusWebPlugin();
     });
 
