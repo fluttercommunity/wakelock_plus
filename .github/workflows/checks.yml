@@ -455,6 +455,35 @@ jobs:
           flutter pub get
           flutter build web --debug --target=./lib/main.dart
 
+  web_plugin_unit_test:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+    name: Web Plugin Unit Test (${{ matrix.flutter_version }})
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ (contains(matrix.flutter_version, '.') || contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: wakelock_plus
+
+      - name: Run Web Plugin Tests
+        run: |
+          flutter test \
+            --platform chrome \
+            --dart-define=WEB_PLUGIN_TESTS=true \
+            test/wakelock_plus_web_plugin_test.dart
+        working-directory: wakelock_plus
+
   web_integration_test:
     needs: setup_matrix
     runs-on: ubuntu-latest
