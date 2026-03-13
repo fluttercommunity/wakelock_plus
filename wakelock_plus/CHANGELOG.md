@@ -1,3 +1,6 @@
+## [1.5.1]
+* [#75](https://github.com/fluttercommunity/wakelock_plus/pull/75): fix: add support for non-root base-href. Thanks [holzgeist](https://github.com/holzgeist).
+
 ## [1.5.0]
 * [#121](https://github.com/fluttercommunity/wakelock_plus/pull/121): Pigeon v26.2 upgrade. Thanks [diegotori](https://github.com/diegotori).
 * **BREAKING CHANGES**:
