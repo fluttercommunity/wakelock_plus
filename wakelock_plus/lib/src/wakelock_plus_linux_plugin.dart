@@ -23,7 +23,8 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
     @visibleForTesting Future<String> Function()? appNameGetter,
   }) {
     final dbusClient = client ?? DBusClient.session();
-    final remoteObject = object ??
+    final remoteObject =
+        object ??
         DBusRemoteObject(
           dbusClient,
           name: 'org.freedesktop.portal.Desktop',
@@ -47,7 +48,8 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
   final Future<String> Function()? _appNameGetter;
   DBusObjectPath? _requestHandle;
 
-  Future<String> get _appName => _appNameGetter?.call() ??
+  Future<String> get _appName =>
+      _appNameGetter?.call() ??
       PackageInfo.fromPlatform().then((info) => info.appName);
 
   @override

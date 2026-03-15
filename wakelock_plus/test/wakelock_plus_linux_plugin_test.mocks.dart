@@ -31,66 +31,36 @@ import 'package:mockito/src/dummies.dart' as _i6;
 
 class _FakeDBusProcessCredentials_0 extends _i1.SmartFake
     implements _i2.DBusProcessCredentials {
-  _FakeDBusProcessCredentials_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusProcessCredentials_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDBusMethodSuccessResponse_1 extends _i1.SmartFake
     implements _i3.DBusMethodSuccessResponse {
-  _FakeDBusMethodSuccessResponse_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusMethodSuccessResponse_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDBusClient_2 extends _i1.SmartFake implements _i2.DBusClient {
-  _FakeDBusClient_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusClient_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDBusObjectPath_3 extends _i1.SmartFake
     implements _i4.DBusObjectPath {
-  _FakeDBusObjectPath_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusObjectPath_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDBusIntrospectNode_4 extends _i1.SmartFake
     implements _i5.DBusIntrospectNode {
-  _FakeDBusIntrospectNode_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusIntrospectNode_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDBusValue_5 extends _i1.SmartFake implements _i4.DBusValue {
-  _FakeDBusValue_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeDBusValue_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [DBusClient].
@@ -102,54 +72,64 @@ class MockDBusClient extends _i1.Mock implements _i2.DBusClient {
   }
 
   @override
-  bool get introspectable => (super.noSuchMethod(
-        Invocation.getter(#introspectable),
-        returnValue: false,
-      ) as bool);
+  bool get introspectable =>
+      (super.noSuchMethod(
+            Invocation.getter(#introspectable),
+            returnValue: false,
+          )
+          as bool);
 
   @override
-  String get uniqueName => (super.noSuchMethod(
-        Invocation.getter(#uniqueName),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#uniqueName),
-        ),
-      ) as String);
+  String get uniqueName =>
+      (super.noSuchMethod(
+            Invocation.getter(#uniqueName),
+            returnValue: _i6.dummyValue<String>(
+              this,
+              Invocation.getter(#uniqueName),
+            ),
+          )
+          as String);
 
   @override
-  Iterable<String> get ownedNames => (super.noSuchMethod(
-        Invocation.getter(#ownedNames),
-        returnValue: <String>[],
-      ) as Iterable<String>);
+  Iterable<String> get ownedNames =>
+      (super.noSuchMethod(
+            Invocation.getter(#ownedNames),
+            returnValue: <String>[],
+          )
+          as Iterable<String>);
 
   @override
-  _i7.Stream<String> get nameAcquired => (super.noSuchMethod(
-        Invocation.getter(#nameAcquired),
-        returnValue: _i7.Stream<String>.empty(),
-      ) as _i7.Stream<String>);
+  _i7.Stream<String> get nameAcquired =>
+      (super.noSuchMethod(
+            Invocation.getter(#nameAcquired),
+            returnValue: _i7.Stream<String>.empty(),
+          )
+          as _i7.Stream<String>);
 
   @override
-  _i7.Stream<String> get nameLost => (super.noSuchMethod(
-        Invocation.getter(#nameLost),
-        returnValue: _i7.Stream<String>.empty(),
-      ) as _i7.Stream<String>);
+  _i7.Stream<String> get nameLost =>
+      (super.noSuchMethod(
+            Invocation.getter(#nameLost),
+            returnValue: _i7.Stream<String>.empty(),
+          )
+          as _i7.Stream<String>);
 
   @override
   _i7.Stream<_i2.DBusNameOwnerChangedEvent> get nameOwnerChanged =>
       (super.noSuchMethod(
-        Invocation.getter(#nameOwnerChanged),
-        returnValue: _i7.Stream<_i2.DBusNameOwnerChangedEvent>.empty(),
-      ) as _i7.Stream<_i2.DBusNameOwnerChangedEvent>);
+            Invocation.getter(#nameOwnerChanged),
+            returnValue: _i7.Stream<_i2.DBusNameOwnerChangedEvent>.empty(),
+          )
+          as _i7.Stream<_i2.DBusNameOwnerChangedEvent>);
 
   @override
-  _i7.Future<void> close() => (super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+  _i7.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   _i7.Future<_i2.DBusRequestNameReply> requestName(
@@ -157,163 +137,139 @@ class MockDBusClient extends _i1.Mock implements _i2.DBusClient {
     Set<_i2.DBusRequestNameFlag>? flags = const {},
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #requestName,
-          [name],
-          {#flags: flags},
-        ),
-        returnValue: _i7.Future<_i2.DBusRequestNameReply>.value(
-            _i2.DBusRequestNameReply.primaryOwner),
-      ) as _i7.Future<_i2.DBusRequestNameReply>);
+            Invocation.method(#requestName, [name], {#flags: flags}),
+            returnValue: _i7.Future<_i2.DBusRequestNameReply>.value(
+              _i2.DBusRequestNameReply.primaryOwner,
+            ),
+          )
+          as _i7.Future<_i2.DBusRequestNameReply>);
 
   @override
   _i7.Future<_i2.DBusReleaseNameReply> releaseName(String? name) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #releaseName,
-          [name],
-        ),
-        returnValue: _i7.Future<_i2.DBusReleaseNameReply>.value(
-            _i2.DBusReleaseNameReply.released),
-      ) as _i7.Future<_i2.DBusReleaseNameReply>);
+            Invocation.method(#releaseName, [name]),
+            returnValue: _i7.Future<_i2.DBusReleaseNameReply>.value(
+              _i2.DBusReleaseNameReply.released,
+            ),
+          )
+          as _i7.Future<_i2.DBusReleaseNameReply>);
 
   @override
   _i7.Future<List<String>> listQueuedOwners(String? name) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #listQueuedOwners,
-          [name],
-        ),
-        returnValue: _i7.Future<List<String>>.value(<String>[]),
-      ) as _i7.Future<List<String>>);
+            Invocation.method(#listQueuedOwners, [name]),
+            returnValue: _i7.Future<List<String>>.value(<String>[]),
+          )
+          as _i7.Future<List<String>>);
 
   @override
-  _i7.Future<List<String>> listNames() => (super.noSuchMethod(
-        Invocation.method(
-          #listNames,
-          [],
-        ),
-        returnValue: _i7.Future<List<String>>.value(<String>[]),
-      ) as _i7.Future<List<String>>);
+  _i7.Future<List<String>> listNames() =>
+      (super.noSuchMethod(
+            Invocation.method(#listNames, []),
+            returnValue: _i7.Future<List<String>>.value(<String>[]),
+          )
+          as _i7.Future<List<String>>);
 
   @override
-  _i7.Future<List<String>> listActivatableNames() => (super.noSuchMethod(
-        Invocation.method(
-          #listActivatableNames,
-          [],
-        ),
-        returnValue: _i7.Future<List<String>>.value(<String>[]),
-      ) as _i7.Future<List<String>>);
+  _i7.Future<List<String>> listActivatableNames() =>
+      (super.noSuchMethod(
+            Invocation.method(#listActivatableNames, []),
+            returnValue: _i7.Future<List<String>>.value(<String>[]),
+          )
+          as _i7.Future<List<String>>);
 
   @override
   _i7.Future<_i2.DBusStartServiceByNameReply> startServiceByName(
-          String? name) =>
+    String? name,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #startServiceByName,
-          [name],
-        ),
-        returnValue: _i7.Future<_i2.DBusStartServiceByNameReply>.value(
-            _i2.DBusStartServiceByNameReply.success),
-      ) as _i7.Future<_i2.DBusStartServiceByNameReply>);
+            Invocation.method(#startServiceByName, [name]),
+            returnValue: _i7.Future<_i2.DBusStartServiceByNameReply>.value(
+              _i2.DBusStartServiceByNameReply.success,
+            ),
+          )
+          as _i7.Future<_i2.DBusStartServiceByNameReply>);
 
   @override
-  _i7.Future<bool> nameHasOwner(String? name) => (super.noSuchMethod(
-        Invocation.method(
-          #nameHasOwner,
-          [name],
-        ),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.Future<bool>);
+  _i7.Future<bool> nameHasOwner(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#nameHasOwner, [name]),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 
   @override
-  _i7.Future<String?> getNameOwner(String? name) => (super.noSuchMethod(
-        Invocation.method(
-          #getNameOwner,
-          [name],
-        ),
-        returnValue: _i7.Future<String?>.value(),
-      ) as _i7.Future<String?>);
+  _i7.Future<String?> getNameOwner(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#getNameOwner, [name]),
+            returnValue: _i7.Future<String?>.value(),
+          )
+          as _i7.Future<String?>);
 
   @override
-  _i7.Future<int> getConnectionUnixUser(String? name) => (super.noSuchMethod(
-        Invocation.method(
-          #getConnectionUnixUser,
-          [name],
-        ),
-        returnValue: _i7.Future<int>.value(0),
-      ) as _i7.Future<int>);
+  _i7.Future<int> getConnectionUnixUser(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#getConnectionUnixUser, [name]),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
 
   @override
   _i7.Future<int> getConnectionUnixProcessId(String? name) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getConnectionUnixProcessId,
-          [name],
-        ),
-        returnValue: _i7.Future<int>.value(0),
-      ) as _i7.Future<int>);
+            Invocation.method(#getConnectionUnixProcessId, [name]),
+            returnValue: _i7.Future<int>.value(0),
+          )
+          as _i7.Future<int>);
 
   @override
   _i7.Future<_i2.DBusProcessCredentials> getConnectionCredentials(
-          String? name) =>
+    String? name,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getConnectionCredentials,
-          [name],
-        ),
-        returnValue: _i7.Future<_i2.DBusProcessCredentials>.value(
-            _FakeDBusProcessCredentials_0(
-          this,
-          Invocation.method(
-            #getConnectionCredentials,
-            [name],
-          ),
-        )),
-      ) as _i7.Future<_i2.DBusProcessCredentials>);
+            Invocation.method(#getConnectionCredentials, [name]),
+            returnValue: _i7.Future<_i2.DBusProcessCredentials>.value(
+              _FakeDBusProcessCredentials_0(
+                this,
+                Invocation.method(#getConnectionCredentials, [name]),
+              ),
+            ),
+          )
+          as _i7.Future<_i2.DBusProcessCredentials>);
 
   @override
-  _i7.Future<String> getId() => (super.noSuchMethod(
-        Invocation.method(
-          #getId,
-          [],
-        ),
-        returnValue: _i7.Future<String>.value(_i6.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getId,
-            [],
-          ),
-        )),
-      ) as _i7.Future<String>);
+  _i7.Future<String> getId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getId, []),
+            returnValue: _i7.Future<String>.value(
+              _i6.dummyValue<String>(this, Invocation.method(#getId, [])),
+            ),
+          )
+          as _i7.Future<String>);
 
   @override
   _i7.Future<void> ping([String? destination = 'org.freedesktop.DBus']) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #ping,
-          [destination],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#ping, [destination]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
-  _i7.Future<String> getMachineId(
-          [String? destination = 'org.freedesktop.DBus']) =>
+  _i7.Future<String> getMachineId([
+    String? destination = 'org.freedesktop.DBus',
+  ]) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMachineId,
-          [destination],
-        ),
-        returnValue: _i7.Future<String>.value(_i6.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getMachineId,
-            [destination],
-          ),
-        )),
-      ) as _i7.Future<String>);
+            Invocation.method(#getMachineId, [destination]),
+            returnValue: _i7.Future<String>.value(
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#getMachineId, [destination]),
+              ),
+            ),
+          )
+          as _i7.Future<String>);
 
   @override
   _i7.Future<_i3.DBusMethodSuccessResponse> callMethod({
@@ -328,28 +284,7 @@ class MockDBusClient extends _i1.Mock implements _i2.DBusClient {
     bool? allowInteractiveAuthorization = false,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #callMethod,
-          [],
-          {
-            #destination: destination,
-            #path: path,
-            #interface: interface,
-            #name: name,
-            #values: values,
-            #replySignature: replySignature,
-            #noReplyExpected: noReplyExpected,
-            #noAutoStart: noAutoStart,
-            #allowInteractiveAuthorization: allowInteractiveAuthorization,
-          },
-        ),
-        returnValue: _i7.Future<_i3.DBusMethodSuccessResponse>.value(
-            _FakeDBusMethodSuccessResponse_1(
-          this,
-          Invocation.method(
-            #callMethod,
-            [],
-            {
+            Invocation.method(#callMethod, [], {
               #destination: destination,
               #path: path,
               #interface: interface,
@@ -359,10 +294,25 @@ class MockDBusClient extends _i1.Mock implements _i2.DBusClient {
               #noReplyExpected: noReplyExpected,
               #noAutoStart: noAutoStart,
               #allowInteractiveAuthorization: allowInteractiveAuthorization,
-            },
-          ),
-        )),
-      ) as _i7.Future<_i3.DBusMethodSuccessResponse>);
+            }),
+            returnValue: _i7.Future<_i3.DBusMethodSuccessResponse>.value(
+              _FakeDBusMethodSuccessResponse_1(
+                this,
+                Invocation.method(#callMethod, [], {
+                  #destination: destination,
+                  #path: path,
+                  #interface: interface,
+                  #name: name,
+                  #values: values,
+                  #replySignature: replySignature,
+                  #noReplyExpected: noReplyExpected,
+                  #noAutoStart: noAutoStart,
+                  #allowInteractiveAuthorization: allowInteractiveAuthorization,
+                }),
+              ),
+            ),
+          )
+          as _i7.Future<_i3.DBusMethodSuccessResponse>);
 
   @override
   _i7.Future<void> emitSignal({
@@ -373,42 +323,35 @@ class MockDBusClient extends _i1.Mock implements _i2.DBusClient {
     Iterable<_i4.DBusValue>? values = const [],
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #emitSignal,
-          [],
-          {
-            #destination: destination,
-            #path: path,
-            #interface: interface,
-            #name: name,
-            #values: values,
-          },
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#emitSignal, [], {
+              #destination: destination,
+              #path: path,
+              #interface: interface,
+              #name: name,
+              #values: values,
+            }),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   _i7.Future<void> registerObject(_i8.DBusObject? object) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #registerObject,
-          [object],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#registerObject, [object]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   _i7.Future<void> unregisterObject(_i8.DBusObject? object) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #unregisterObject,
-          [object],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#unregisterObject, [object]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 }
 
 /// A class which mocks [DBusRemoteObject].
@@ -420,64 +363,56 @@ class MockDBusRemoteObject extends _i1.Mock implements _i9.DBusRemoteObject {
   }
 
   @override
-  _i2.DBusClient get client => (super.noSuchMethod(
-        Invocation.getter(#client),
-        returnValue: _FakeDBusClient_2(
-          this,
-          Invocation.getter(#client),
-        ),
-      ) as _i2.DBusClient);
+  _i2.DBusClient get client =>
+      (super.noSuchMethod(
+            Invocation.getter(#client),
+            returnValue: _FakeDBusClient_2(this, Invocation.getter(#client)),
+          )
+          as _i2.DBusClient);
 
   @override
-  String get name => (super.noSuchMethod(
-        Invocation.getter(#name),
-        returnValue: _i6.dummyValue<String>(
-          this,
-          Invocation.getter(#name),
-        ),
-      ) as String);
+  String get name =>
+      (super.noSuchMethod(
+            Invocation.getter(#name),
+            returnValue: _i6.dummyValue<String>(this, Invocation.getter(#name)),
+          )
+          as String);
 
   @override
-  _i4.DBusObjectPath get path => (super.noSuchMethod(
-        Invocation.getter(#path),
-        returnValue: _FakeDBusObjectPath_3(
-          this,
-          Invocation.getter(#path),
-        ),
-      ) as _i4.DBusObjectPath);
+  _i4.DBusObjectPath get path =>
+      (super.noSuchMethod(
+            Invocation.getter(#path),
+            returnValue: _FakeDBusObjectPath_3(this, Invocation.getter(#path)),
+          )
+          as _i4.DBusObjectPath);
 
   @override
   _i7.Stream<_i9.DBusPropertiesChangedSignal> get propertiesChanged =>
       (super.noSuchMethod(
-        Invocation.getter(#propertiesChanged),
-        returnValue: _i7.Stream<_i9.DBusPropertiesChangedSignal>.empty(),
-      ) as _i7.Stream<_i9.DBusPropertiesChangedSignal>);
+            Invocation.getter(#propertiesChanged),
+            returnValue: _i7.Stream<_i9.DBusPropertiesChangedSignal>.empty(),
+          )
+          as _i7.Stream<_i9.DBusPropertiesChangedSignal>);
 
   @override
   set propertiesChanged(_i7.Stream<_i9.DBusPropertiesChangedSignal>? value) =>
       super.noSuchMethod(
-        Invocation.setter(
-          #propertiesChanged,
-          value,
-        ),
+        Invocation.setter(#propertiesChanged, value),
         returnValueForMissingStub: null,
       );
 
   @override
-  _i7.Future<_i5.DBusIntrospectNode> introspect() => (super.noSuchMethod(
-        Invocation.method(
-          #introspect,
-          [],
-        ),
-        returnValue:
-            _i7.Future<_i5.DBusIntrospectNode>.value(_FakeDBusIntrospectNode_4(
-          this,
-          Invocation.method(
-            #introspect,
-            [],
-          ),
-        )),
-      ) as _i7.Future<_i5.DBusIntrospectNode>);
+  _i7.Future<_i5.DBusIntrospectNode> introspect() =>
+      (super.noSuchMethod(
+            Invocation.method(#introspect, []),
+            returnValue: _i7.Future<_i5.DBusIntrospectNode>.value(
+              _FakeDBusIntrospectNode_4(
+                this,
+                Invocation.method(#introspect, []),
+              ),
+            ),
+          )
+          as _i7.Future<_i5.DBusIntrospectNode>);
 
   @override
   _i7.Future<_i4.DBusValue> getProperty(
@@ -486,37 +421,33 @@ class MockDBusRemoteObject extends _i1.Mock implements _i9.DBusRemoteObject {
     _i4.DBusSignature? signature,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getProperty,
-          [
-            interface,
-            name,
-          ],
-          {#signature: signature},
-        ),
-        returnValue: _i7.Future<_i4.DBusValue>.value(_FakeDBusValue_5(
-          this,
-          Invocation.method(
-            #getProperty,
-            [
-              interface,
-              name,
-            ],
-            {#signature: signature},
-          ),
-        )),
-      ) as _i7.Future<_i4.DBusValue>);
+            Invocation.method(
+              #getProperty,
+              [interface, name],
+              {#signature: signature},
+            ),
+            returnValue: _i7.Future<_i4.DBusValue>.value(
+              _FakeDBusValue_5(
+                this,
+                Invocation.method(
+                  #getProperty,
+                  [interface, name],
+                  {#signature: signature},
+                ),
+              ),
+            ),
+          )
+          as _i7.Future<_i4.DBusValue>);
 
   @override
   _i7.Future<Map<String, _i4.DBusValue>> getAllProperties(String? interface) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAllProperties,
-          [interface],
-        ),
-        returnValue: _i7.Future<Map<String, _i4.DBusValue>>.value(
-            <String, _i4.DBusValue>{}),
-      ) as _i7.Future<Map<String, _i4.DBusValue>>);
+            Invocation.method(#getAllProperties, [interface]),
+            returnValue: _i7.Future<Map<String, _i4.DBusValue>>.value(
+              <String, _i4.DBusValue>{},
+            ),
+          )
+          as _i7.Future<Map<String, _i4.DBusValue>>);
 
   @override
   _i7.Future<void> setProperty(
@@ -525,17 +456,11 @@ class MockDBusRemoteObject extends _i1.Mock implements _i9.DBusRemoteObject {
     _i4.DBusValue? value,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setProperty,
-          [
-            interface,
-            name,
-            value,
-          ],
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+            Invocation.method(#setProperty, [interface, name, value]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   _i7.Future<_i3.DBusMethodSuccessResponse> callMethod(
@@ -548,37 +473,32 @@ class MockDBusRemoteObject extends _i1.Mock implements _i9.DBusRemoteObject {
     bool? allowInteractiveAuthorization = false,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #callMethod,
-          [
-            interface,
-            name,
-            values,
-          ],
-          {
-            #replySignature: replySignature,
-            #noReplyExpected: noReplyExpected,
-            #noAutoStart: noAutoStart,
-            #allowInteractiveAuthorization: allowInteractiveAuthorization,
-          },
-        ),
-        returnValue: _i7.Future<_i3.DBusMethodSuccessResponse>.value(
-            _FakeDBusMethodSuccessResponse_1(
-          this,
-          Invocation.method(
-            #callMethod,
-            [
-              interface,
-              name,
-              values,
-            ],
-            {
-              #replySignature: replySignature,
-              #noReplyExpected: noReplyExpected,
-              #noAutoStart: noAutoStart,
-              #allowInteractiveAuthorization: allowInteractiveAuthorization,
-            },
-          ),
-        )),
-      ) as _i7.Future<_i3.DBusMethodSuccessResponse>);
+            Invocation.method(
+              #callMethod,
+              [interface, name, values],
+              {
+                #replySignature: replySignature,
+                #noReplyExpected: noReplyExpected,
+                #noAutoStart: noAutoStart,
+                #allowInteractiveAuthorization: allowInteractiveAuthorization,
+              },
+            ),
+            returnValue: _i7.Future<_i3.DBusMethodSuccessResponse>.value(
+              _FakeDBusMethodSuccessResponse_1(
+                this,
+                Invocation.method(
+                  #callMethod,
+                  [interface, name, values],
+                  {
+                    #replySignature: replySignature,
+                    #noReplyExpected: noReplyExpected,
+                    #noAutoStart: noAutoStart,
+                    #allowInteractiveAuthorization:
+                        allowInteractiveAuthorization,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i7.Future<_i3.DBusMethodSuccessResponse>);
 }

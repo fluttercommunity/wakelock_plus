@@ -28,8 +28,10 @@ void main() {
 
     test('registerWith sets instance', () {
       WakelockPlusLinuxPlugin.registerWith();
-      expect(WakelockPlusPlatformInterface.instance,
-          isA<WakelockPlusLinuxPlugin>());
+      expect(
+        WakelockPlusPlatformInterface.instance,
+        isA<WakelockPlusLinuxPlugin>(),
+      );
     });
 
     test('uses org.freedesktop.portal.Desktop', () {
@@ -44,52 +46,64 @@ void main() {
     group('enable', () {
       test('calls Inhibit with correct parameters', () async {
         final mockResponse = DBusMethodSuccessResponse([
-          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test')
+          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test'),
         ]);
 
-        when(mockPortalObject.callMethod(
-          'org.freedesktop.portal.Inhibit',
-          'Inhibit',
-          any,
-          replySignature: anyNamed('replySignature'),
-        )).thenAnswer((_) async => mockResponse);
+        when(
+          mockPortalObject.callMethod(
+            'org.freedesktop.portal.Inhibit',
+            'Inhibit',
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         await plugin.toggle(enable: true);
 
-        verify(mockPortalObject.callMethod(
-          'org.freedesktop.portal.Inhibit',
-          'Inhibit',
-          argThat(isA<List>()
-              .having((l) => l.length, 'length', 3)
-              .having((l) => l[0], 'window', isA<DBusString>())
-              .having((l) => l[1], 'flags', isA<DBusUint32>())
-              .having((l) => l[2], 'options', isA<DBusDict>())),
-          replySignature: DBusSignature('o'),
-        )).called(1);
+        verify(
+          mockPortalObject.callMethod(
+            'org.freedesktop.portal.Inhibit',
+            'Inhibit',
+            argThat(
+              isA<List>()
+                  .having((l) => l.length, 'length', 3)
+                  .having((l) => l[0], 'window', isA<DBusString>())
+                  .having((l) => l[1], 'flags', isA<DBusUint32>())
+                  .having((l) => l[2], 'options', isA<DBusDict>()),
+            ),
+            replySignature: DBusSignature('o'),
+          ),
+        ).called(1);
 
         expect(await plugin.enabled, isTrue);
       });
 
       test('flags are set to 8 (Idle)', () async {
         final mockResponse = DBusMethodSuccessResponse([
-          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test')
+          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test'),
         ]);
 
-        when(mockPortalObject.callMethod(
-          any,
-          any,
-          any,
-          replySignature: anyNamed('replySignature'),
-        )).thenAnswer((_) async => mockResponse);
+        when(
+          mockPortalObject.callMethod(
+            any,
+            any,
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         await plugin.toggle(enable: true);
 
-        final captured = verify(mockPortalObject.callMethod(
-          any,
-          any,
-          captureAny,
-          replySignature: anyNamed('replySignature'),
-        )).captured.single as List;
+        final captured =
+            verify(
+                  mockPortalObject.callMethod(
+                    any,
+                    any,
+                    captureAny,
+                    replySignature: anyNamed('replySignature'),
+                  ),
+                ).captured.single
+                as List;
 
         final flags = captured[1] as DBusUint32;
         expect(flags.value, equals(8)); // 8 = Idle flag
@@ -97,24 +111,30 @@ void main() {
 
       test('includes reason in options', () async {
         final mockResponse = DBusMethodSuccessResponse([
-          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test')
+          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test'),
         ]);
 
-        when(mockPortalObject.callMethod(
-          any,
-          any,
-          any,
-          replySignature: anyNamed('replySignature'),
-        )).thenAnswer((_) async => mockResponse);
+        when(
+          mockPortalObject.callMethod(
+            any,
+            any,
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         await plugin.toggle(enable: true);
 
-        final captured = verify(mockPortalObject.callMethod(
-          any,
-          any,
-          captureAny,
-          replySignature: anyNamed('replySignature'),
-        )).captured.single as List;
+        final captured =
+            verify(
+                  mockPortalObject.callMethod(
+                    any,
+                    any,
+                    captureAny,
+                    replySignature: anyNamed('replySignature'),
+                  ),
+                ).captured.single
+                as List;
 
         final options = captured[2] as DBusDict;
         expect(options.children.containsKey(DBusString('reason')), isTrue);
@@ -123,27 +143,32 @@ void main() {
 
     group('disable', () {
       test('calls Request.Close and clears state', () async {
-        final handlePath =
-            DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test');
+        final handlePath = DBusObjectPath(
+          '/org/freedesktop/portal/desktop/request/1_1/test',
+        );
         final mockInhibitResponse = DBusMethodSuccessResponse([handlePath]);
         final mockCloseResponse = DBusMethodSuccessResponse([]);
 
-        when(mockPortalObject.callMethod(
-          'org.freedesktop.portal.Inhibit',
-          'Inhibit',
-          any,
-          replySignature: anyNamed('replySignature'),
-        )).thenAnswer((_) async => mockInhibitResponse);
+        when(
+          mockPortalObject.callMethod(
+            'org.freedesktop.portal.Inhibit',
+            'Inhibit',
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        ).thenAnswer((_) async => mockInhibitResponse);
 
         // Mock the Close call on DBusClient
-        when(mockClient.callMethod(
-          destination: 'org.freedesktop.portal.Desktop',
-          path: handlePath,
-          interface: 'org.freedesktop.portal.Request',
-          name: 'Close',
-          values: [],
-          replySignature: DBusSignature.empty,
-        )).thenAnswer((_) async => mockCloseResponse);
+        when(
+          mockClient.callMethod(
+            destination: 'org.freedesktop.portal.Desktop',
+            path: handlePath,
+            interface: 'org.freedesktop.portal.Request',
+            name: 'Close',
+            values: [],
+            replySignature: DBusSignature.empty,
+          ),
+        ).thenAnswer((_) async => mockCloseResponse);
 
         // Enable first
         await plugin.toggle(enable: true);
@@ -154,25 +179,29 @@ void main() {
         expect(await plugin.enabled, isFalse);
 
         // Verify Close was called
-        verify(mockClient.callMethod(
-          destination: 'org.freedesktop.portal.Desktop',
-          path: handlePath,
-          interface: 'org.freedesktop.portal.Request',
-          name: 'Close',
-          values: [],
-          replySignature: DBusSignature.empty,
-        )).called(1);
+        verify(
+          mockClient.callMethod(
+            destination: 'org.freedesktop.portal.Desktop',
+            path: handlePath,
+            interface: 'org.freedesktop.portal.Request',
+            name: 'Close',
+            values: [],
+            replySignature: DBusSignature.empty,
+          ),
+        ).called(1);
       });
 
       test('does nothing if not enabled', () async {
         await plugin.toggle(enable: false);
         expect(await plugin.enabled, isFalse);
-        verifyNever(mockPortalObject.callMethod(
-          any,
-          any,
-          any,
-          replySignature: anyNamed('replySignature'),
-        ));
+        verifyNever(
+          mockPortalObject.callMethod(
+            any,
+            any,
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        );
       });
     });
 
@@ -183,15 +212,17 @@ void main() {
 
       test('returns true after enable', () async {
         final mockResponse = DBusMethodSuccessResponse([
-          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test')
+          DBusObjectPath('/org/freedesktop/portal/desktop/request/1_1/test'),
         ]);
 
-        when(mockPortalObject.callMethod(
-          any,
-          any,
-          any,
-          replySignature: anyNamed('replySignature'),
-        )).thenAnswer((_) async => mockResponse);
+        when(
+          mockPortalObject.callMethod(
+            any,
+            any,
+            any,
+            replySignature: anyNamed('replySignature'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         await plugin.toggle(enable: true);
         expect(await plugin.enabled, isTrue);
