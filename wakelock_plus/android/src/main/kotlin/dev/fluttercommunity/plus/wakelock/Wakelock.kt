@@ -29,7 +29,7 @@ internal class Wakelock {
 
   fun isEnabled(): IsEnabledMessage {
     if (activity == null) {
-      throw NoActivityException()
+      return IsEnabledMessage(enabled = false)
     }
 
     return IsEnabledMessage(enabled = enabled)
