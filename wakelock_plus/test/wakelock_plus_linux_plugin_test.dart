@@ -1,15 +1,21 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:wakelock_plus/src/wakelock_plus_linux_plugin.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 
-import 'wakelock_plus_linux_plugin_test.mocks.dart';
+class MockDBusClient extends Mock implements DBusClient {}
 
-@GenerateMocks([DBusClient, DBusRemoteObject])
+class MockDBusRemoteObject extends Mock implements DBusRemoteObject {}
+
+class FakeDBusSignature extends Fake implements DBusSignature {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    registerFallbackValue(FakeDBusSignature());
+  });
 
   group('WakelockPlusLinuxPlugin', () {
     late MockDBusClient mockClient;
@@ -50,22 +56,22 @@ void main() {
         ]);
 
         when(
-          mockPortalObject.callMethod(
+          () => mockPortalObject.callMethod(
             'org.freedesktop.portal.Inhibit',
             'Inhibit',
-            any,
-            replySignature: anyNamed('replySignature'),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         ).thenAnswer((_) async => mockResponse);
 
         await plugin.toggle(enable: true);
 
         verify(
-          mockPortalObject.callMethod(
+          () => mockPortalObject.callMethod(
             'org.freedesktop.portal.Inhibit',
             'Inhibit',
-            argThat(
-              isA<List>()
+            any(
+              that: isA<List>()
                   .having((l) => l.length, 'length', 3)
                   .having((l) => l[0], 'window', isA<DBusString>())
                   .having((l) => l[1], 'flags', isA<DBusUint32>())
@@ -84,11 +90,11 @@ void main() {
         ]);
 
         when(
-          mockPortalObject.callMethod(
-            any,
-            any,
-            any,
-            replySignature: anyNamed('replySignature'),
+          () => mockPortalObject.callMethod(
+            any(),
+            any(),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         ).thenAnswer((_) async => mockResponse);
 
@@ -96,14 +102,14 @@ void main() {
 
         final captured =
             verify(
-                  mockPortalObject.callMethod(
-                    any,
-                    any,
-                    captureAny,
-                    replySignature: anyNamed('replySignature'),
+                  () => mockPortalObject.callMethod(
+                    any(),
+                    any(),
+                    captureAny(),
+                    replySignature: any(named: 'replySignature'),
                   ),
                 ).captured.single
-                as List;
+                as List<dynamic>;
 
         final flags = captured[1] as DBusUint32;
         expect(flags.value, equals(8)); // 8 = Idle flag
@@ -115,11 +121,11 @@ void main() {
         ]);
 
         when(
-          mockPortalObject.callMethod(
-            any,
-            any,
-            any,
-            replySignature: anyNamed('replySignature'),
+          () => mockPortalObject.callMethod(
+            any(),
+            any(),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         ).thenAnswer((_) async => mockResponse);
 
@@ -127,14 +133,14 @@ void main() {
 
         final captured =
             verify(
-                  mockPortalObject.callMethod(
-                    any,
-                    any,
-                    captureAny,
-                    replySignature: anyNamed('replySignature'),
+                  () => mockPortalObject.callMethod(
+                    any(),
+                    any(),
+                    captureAny(),
+                    replySignature: any(named: 'replySignature'),
                   ),
                 ).captured.single
-                as List;
+                as List<dynamic>;
 
         final options = captured[2] as DBusDict;
         expect(options.children.containsKey(DBusString('reason')), isTrue);
@@ -150,22 +156,22 @@ void main() {
         final mockCloseResponse = DBusMethodSuccessResponse([]);
 
         when(
-          mockPortalObject.callMethod(
+          () => mockPortalObject.callMethod(
             'org.freedesktop.portal.Inhibit',
             'Inhibit',
-            any,
-            replySignature: anyNamed('replySignature'),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         ).thenAnswer((_) async => mockInhibitResponse);
 
         // Mock the Close call on DBusClient
         when(
-          mockClient.callMethod(
+          () => mockClient.callMethod(
             destination: 'org.freedesktop.portal.Desktop',
             path: handlePath,
             interface: 'org.freedesktop.portal.Request',
             name: 'Close',
-            values: [],
+            values: any(named: 'values'),
             replySignature: DBusSignature.empty,
           ),
         ).thenAnswer((_) async => mockCloseResponse);
@@ -180,7 +186,7 @@ void main() {
 
         // Verify Close was called
         verify(
-          mockClient.callMethod(
+          () => mockClient.callMethod(
             destination: 'org.freedesktop.portal.Desktop',
             path: handlePath,
             interface: 'org.freedesktop.portal.Request',
@@ -195,11 +201,11 @@ void main() {
         await plugin.toggle(enable: false);
         expect(await plugin.enabled, isFalse);
         verifyNever(
-          mockPortalObject.callMethod(
-            any,
-            any,
-            any,
-            replySignature: anyNamed('replySignature'),
+          () => mockPortalObject.callMethod(
+            any(),
+            any(),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         );
       });
@@ -216,11 +222,11 @@ void main() {
         ]);
 
         when(
-          mockPortalObject.callMethod(
-            any,
-            any,
-            any,
-            replySignature: anyNamed('replySignature'),
+          () => mockPortalObject.callMethod(
+            any(),
+            any(),
+            any(),
+            replySignature: any(named: 'replySignature'),
           ),
         ).thenAnswer((_) async => mockResponse);
 
