@@ -351,6 +351,12 @@ jobs:
             libgtk-3-dev liblzma-dev xvfb dbus-x11 \
             python3-dbus python3-gi
 
+      - name: Run Linux Unit Tests
+        run: |
+          cd wakelock_plus
+          flutter pub get
+          flutter test test/wakelock_plus_linux_plugin_test.dart
+
       - name: Run Integration Tests
         run: |
           flutter config --enable-linux-desktop
@@ -358,22 +364,27 @@ jobs:
           flutter pub get
           
           # We use xvfb-run (display) and dbus-run-session (bus).
-          # Inside, we run a Python mock of 'org.freedesktop.ScreenSaver' so the plugin logic succeeds.
+          # Inside, we run a Python mock of 'org.freedesktop.portal.Desktop' so the plugin logic succeeds.
           xvfb-run dbus-run-session bash -c "
           python3 -c \"
           import dbus, dbus.service
           from dbus.mainloop.glib import DBusGMainLoop
           from gi.repository import GLib
-          class Mock(dbus.service.Object):
-              def __init__(self):
-                  bus_name = dbus.service.BusName('org.freedesktop.ScreenSaver', bus=dbus.SessionBus())
-                  dbus.service.Object.__init__(self, bus_name, '/org/freedesktop/ScreenSaver')
-              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='ss', out_signature='u')
-              def Inhibit(self, a, r): return 1
-              @dbus.service.method('org.freedesktop.ScreenSaver', in_signature='u', out_signature='')
-              def UnInhibit(self, c): pass
+          class RequestMock(dbus.service.Object):
+              def __init__(self, bus):
+                  dbus.service.Object.__init__(self, bus, '/org/freedesktop/portal/desktop/request/1_1/test')
+              @dbus.service.method('org.freedesktop.portal.Request', in_signature='', out_signature='')
+              def Close(self): pass
+          class DesktopMock(dbus.service.Object):
+              def __init__(self, bus):
+                  bus_name = dbus.service.BusName('org.freedesktop.portal.Desktop', bus=bus)
+                  dbus.service.Object.__init__(self, bus_name, '/org/freedesktop/portal/desktop')
+              @dbus.service.method('org.freedesktop.portal.Inhibit', in_signature='sua{sv}', out_signature='o')
+              def Inhibit(self, window, flags, options): return dbus.ObjectPath('/org/freedesktop/portal/desktop/request/1_1/test')
           DBusGMainLoop(set_as_default=True)
-          Mock()
+          bus = dbus.SessionBus()
+          DesktopMock(bus)
+          RequestMock(bus)
           GLib.MainLoop().run()\" &
           sleep 5 && \
           flutter drive \
