@@ -1,3 +1,6 @@
+## [1.5.2]
+* [#118](https://github.com/fluttercommunity/wakelock_plus/pull/118): Replace org.freedesktop.ScreenSaver with org.freedesktop.portal.Inhibit. Thanks [shinnkka](https://github.com/shinnkka).
+
 ## [1.5.1]
 * [#75](https://github.com/fluttercommunity/wakelock_plus/pull/75): fix: add support for non-root base-href. Thanks [holzgeist](https://github.com/holzgeist).
 

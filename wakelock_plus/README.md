@@ -36,15 +36,15 @@ automatically.
 ## Framework and Platform Requirements
 
 * Flutter
-  - Flutter SDK >=3.22.0
-  - Dart SDK >=3.4.0
+  - Flutter SDK >=3.38.0
+  - Dart SDK >=3.10.0
 * Android
-  - Android API 21 (Lollipop) or higher
+  - Android API Level 24 (Nougat) or higher
   - Java 17 or higher
   - Android Gradle Plugin >=8.12.1
   - Gradle wrapper >=8.13
 * iOS
-  - iOS 12.0 or higher
+  - iOS 13.0 or higher
 * macOS
   - macOS 10.15 or higher
 * Windows
