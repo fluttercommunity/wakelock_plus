@@ -1,4 +1,4 @@
-name: pana
+name: pub_dev_publish_check
 
 on:
   pull_request:
@@ -14,11 +14,15 @@ on:
       - '**/assets/**'
       - '**/integration_test/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  configure:
-    timeout-minutes: 9
+  pub_dev_publish_check:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
-    name: ${{ matrix.package }} configuration
+    name: "${{ matrix.package }} pub.dev publish check"
     strategy:
       matrix:
         package:
@@ -27,8 +31,16 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: axel-op/dart-package-analyzer@v3
+      - name: "Checkout repository"
+        uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
         with:
-          relativePath: ${{ matrix.package }}
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          channel: stable
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: "Install dependencies"
+        run: flutter pub get --no-example
+        working-directory: ${{ matrix.package }}
+      - name: "Check pub.dev requirements"
+        run: flutter pub publish --dry-run
+        working-directory: ${{ matrix.package }}
