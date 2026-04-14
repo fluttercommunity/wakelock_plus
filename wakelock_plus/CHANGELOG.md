@@ -1,3 +1,12 @@
+## [1.6.0]
+* [#122](https://github.com/fluttercommunity/wakelock_plus/pull/122): feat: bump win32 to 6.x and widen package_info_plus to 10.x. Thanks [dbebawy](https://github.com/dbebawy).
+* [#123](https://github.com/fluttercommunity/wakelock_plus/pull/123): Flutter 3.41 upgrade. Thanks [diegotori](https://github.com/diegotori).
+* [#124](https://github.com/fluttercommunity/wakelock_plus/pull/124): fix: replace unmaintained pana action with pub publish --dry-run. Thanks [dbebawy](https://github.com/dbebawy).
+* **BREAKING CHANGES**:
+  - Dart
+    * Library now requires Dart version `3.11` or higher.
+    * Library now requires Flutter version `3.41` or higher.
+
 ## [1.5.2]
 * [#118](https://github.com/fluttercommunity/wakelock_plus/pull/118): Replace org.freedesktop.ScreenSaver with org.freedesktop.portal.Inhibit. Thanks [shinnkka](https://github.com/shinnkka).
 
