@@ -33,10 +33,10 @@ in the main package. The API is defined in Dart in the [`wakelock_plus_platform_
 
 The packages in this repo are the following:
 
-| Package                                                                                                                       | Implementations                                                                    |
-|-------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`wakelock_plus`](https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock)                                       | Main plugin package + Android, iOS, macOS, Windows, Linux, and Web implementations |
-| [`wakelock_plus_platform_interface`](https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_platform_interface) | Basic API definition & message handling                                            |
+| Package                                                                                                                            | Implementations                                                                    |
+|------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| [`wakelock_plus`](https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus)                                       | Main plugin package + Android, iOS, macOS, Windows, Linux, and Web implementations |
+| [`wakelock_plus_platform_interface`](https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus_platform_interface) | Basic API definition & message handling                                            |
 
 ## Contributing
 
