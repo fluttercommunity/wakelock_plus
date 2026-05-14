@@ -23,7 +23,7 @@ concurrency:
 env:
   # The version of Flutter to use should use the minimum Dart SDK version supported by the package.
   # Current minimum (N-1 logic)
-  FLUTTER_VERSION_MINIMUM_DEFAULT: "3.41.6"
+  FLUTTER_VERSION_MINIMUM_DEFAULT: "3.38.10"
   # Latest 3.x stable
   FLUTTER_VERSION_LATEST_STABLE_CHANNEL_DEFAULT: "3.x"
   # Beta channel support
