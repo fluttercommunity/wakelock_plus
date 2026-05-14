@@ -515,8 +515,11 @@ jobs:
       - name: Install Web Dependencies
         run: |
           sudo apt-get update
-          # Install xvfb and the specific chromium-chromedriver
-          sudo apt-get install -y xvfb chromium-chromedriver
+          # Install xvfb and the specific chromium-chromedriver.
+          # We use a retry loop to handle transient Snap Store 408 errors often encountered on CI.
+          for i in {1..3}; do
+            sudo apt-get install -y xvfb chromium-chromedriver && break || sleep 15
+          done
 
       - name: Start ChromeDriver & Xvfb
         run: |
