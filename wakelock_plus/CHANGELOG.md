@@ -1,3 +1,8 @@
+## [1.6.1]
+* [#133](https://github.com/fluttercommunity/wakelock_plus/pull/133): wakelock_plus Flutter 3.38 downgrade. Thanks [diegotori](https://github.com/diegotori).
+- Library now requires Dart version `3.10` or higher, restoring previous compatibility.
+- Library now requires Flutter version `3.38` or higher, restoring previous compatibility.
+
 ## [1.6.0]
 * [#122](https://github.com/fluttercommunity/wakelock_plus/pull/122): feat: bump win32 to 6.x and widen package_info_plus to 10.x. Thanks [dbebawy](https://github.com/dbebawy).
 * [#123](https://github.com/fluttercommunity/wakelock_plus/pull/123): Flutter 3.41 upgrade. Thanks [diegotori](https://github.com/diegotori).
