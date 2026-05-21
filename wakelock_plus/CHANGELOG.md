@@ -1,3 +1,6 @@
+## [1.6.2]
+* Android: Fixed `NoActivityException` ("wakelock requires a foreground activity") being thrown when `toggle`/`enabled` were called with no foreground activity attached (e.g. while the app is backgrounded or during a lifecycle transition). The requested wakelock state is now remembered and re-applied once an activity (re)attaches instead of throwing.
+
 ## [1.6.1]
 * [#133](https://github.com/fluttercommunity/wakelock_plus/pull/133): wakelock_plus Flutter 3.38 downgrade. Thanks [diegotori](https://github.com/diegotori).
 - Library now requires Dart version `3.10` or higher, restoring previous compatibility.

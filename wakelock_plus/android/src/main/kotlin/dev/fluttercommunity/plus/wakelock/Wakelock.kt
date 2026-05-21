@@ -6,34 +6,35 @@ import android.app.Activity
 import android.view.WindowManager
 
 internal class Wakelock {
-  var activity: Activity? = null
+  // The desired wakelock state. Tracked independently of [activity] so that a
+  // toggle requested while no activity is attached (e.g. the app is in the
+  // background or mid lifecycle transition) is remembered and re-applied once an
+  // activity (re)attaches, instead of throwing a NoActivityException.
+  private var enableWakelock = false
 
-  private val enabled
-    get() = activity!!.window.attributes.flags and
-        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON != 0
+  var activity: Activity? = null
+    set(value) {
+      field = value
+      // Re-assert the wakelock on the newly attached activity's window, but only
+      // when it was actually requested. If the user never enabled it (or last
+      // disabled it), leave the flag alone — the activity may keep the screen on
+      // for its own reasons.
+      if (enableWakelock) applyWakelock()
+    }
+
+  private fun applyWakelock() {
+    val window = activity?.window ?: return
+    if (enableWakelock) {
+      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    } else {
+      window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+  }
 
   fun toggle(message: ToggleMessage) {
-    if (activity == null) {
-      throw NoActivityException()
-    }
-
-    val activity = this.activity!!
-    val enabled = this.enabled
-
-    if (message.enable!!) {
-      if (!enabled) activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    } else if (enabled) {
-      activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
+    enableWakelock = message.enable!!
+    applyWakelock()
   }
 
-  fun isEnabled(): IsEnabledMessage {
-    if (activity == null) {
-      throw NoActivityException()
-    }
-
-    return IsEnabledMessage(enabled = enabled)
-  }
+  fun isEnabled(): IsEnabledMessage = IsEnabledMessage(enabled = enableWakelock)
 }
-
-class NoActivityException : Exception("wakelock requires a foreground activity")
