@@ -1,3 +1,14 @@
+## [1.7.0]
+* Migrate to built-in Kotlin per the official Flutter migration guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+* Remove `apply plugin: "kotlin-android"` and KGP classpath from `android/build.gradle`.
+* Remove `id 'kotlin-android'` and the `kotlinOptions` block from `example/android/app/build.gradle`.
+* Add a top-level `kotlin { compilerOptions { jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17 } }` block in both gradle files.
+* Flip `android.builtInKotlin=true` and `android.newDsl=true` in `example/android/gradle.properties`.
+* **BREAKING CHANGES**:
+  - Dart
+    * Library now requires Dart version `3.12` or higher.
+    * Library now requires Flutter version `3.44` or higher.
+
 ## [1.6.1]
 * [#133](https://github.com/fluttercommunity/wakelock_plus/pull/133): wakelock_plus Flutter 3.38 downgrade. Thanks [diegotori](https://github.com/diegotori).
 - Library now requires Dart version `3.10` or higher, restoring previous compatibility.
