@@ -2,6 +2,13 @@ plugins {
     id 'com.android.application'
     id 'dev.flutter.flutter-gradle-plugin'
 }
+
+// Conditionally apply KGP only if AGP version is earlier than 9.
+def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0] as int
+if (agpMajor < 9) {
+    project.pluginManager.apply('org.jetbrains.kotlin.android')
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
