@@ -11,11 +11,15 @@ let package = Package(
     products: [
         .library(name: "wakelock-plus", targets: ["wakelock_plus"])
     ],
-    dependencies: [],
+    dependencies: [
+        .package(name: "FlutterFramework", path: "../FlutterFramework")
+    ],
     targets: [
         .target(
             name: "wakelock_plus",
-            dependencies: [],
+            dependencies: [
+                .product(name: "FlutterFramework", package: "FlutterFramework")
+            ],
             resources: [
                 .process("Resources")
             ],
