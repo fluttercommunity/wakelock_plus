@@ -534,6 +534,22 @@ jobs:
           # 4. Give services time to initialize
           sleep 5
 
+      - name: Patch Flutter SDK (Fix AppConnectionException)
+        # Workaround for AppConnectionException regression in Flutter 3.44.
+        # This forces DWDS to use a WebSocket connection strategy, avoiding the race condition
+        # during the Chrome DevTools Protocol handshake.
+        # See: https://github.com/flutter/flutter/issues/181357
+        run: |
+          # Force DWDS to use a WebSocket connection to avoid the discovery race condition
+          FILE_PATH="$FLUTTER_ROOT/packages/flutter_tools/lib/src/isolated/resident_web_runner.dart"
+          sed -i "s/late final bool useDwdsWebSocketConnection = .*/late final bool useDwdsWebSocketConnection = true;/g" "$FILE_PATH"
+          
+          # Clear the tool snapshot to force a rebuild with the patch
+          rm "$FLUTTER_ROOT/bin/cache/flutter_tools.snapshot"
+          
+          # Trigger the rebuild
+          flutter doctor
+
       - name: Run Integration Tests
         run: |
           # Must re-export DISPLAY in this step as well
