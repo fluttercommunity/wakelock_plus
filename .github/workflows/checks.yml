@@ -212,7 +212,7 @@ jobs:
     needs: setup_matrix
     # Per requirements: macOS-26 runner is required to access the iPhone 17 simulator environment
     runs-on: macos-26
-    timeout-minutes: 60
+    timeout-minutes: 75
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
@@ -227,6 +227,7 @@ jobs:
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Start iOS simulator
+        id: ios_simulator
         # Using standard simulator-action to handle the simulator lifecycle on macOS-26
         uses: futureware-tech/simulator-action@v5
         with:
@@ -240,6 +241,7 @@ jobs:
           cd wakelock_plus/example
           flutter pub get
           flutter drive \
+            -d ${{ steps.ios_simulator.outputs.udid }} \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/wakelock_plus_test.dart
 
