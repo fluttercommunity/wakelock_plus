@@ -139,6 +139,12 @@ jobs:
           cd wakelock_plus/example
           flutter pub get
           flutter build apk --debug --target=./lib/main.dart
+      - name: Android plugin unit tests (Robolectric)
+        # The APK build above generates the (gitignored) Gradle wrapper that this
+        # step reuses to run the plugin's JVM/Robolectric unit tests.
+        run: |
+          cd wakelock_plus/example/android
+          ./gradlew :wakelock_plus:testDebugUnitTest
 
   android_integration_test:
     needs: setup_matrix

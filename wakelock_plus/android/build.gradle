@@ -38,6 +38,13 @@ android {
     dependencies {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
+        // Robolectric runs the JVM unit tests against a simulated Android
+        // framework so the wakelock window flags can be asserted without a
+        // device. It is JUnit4-based, so the vintage engine bridges it onto the
+        // JUnit Platform configured below (useJUnitPlatform()).
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation 'org.robolectric:robolectric:4.14.1'
+        testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.11.4'
     }
 
     testOptions {
