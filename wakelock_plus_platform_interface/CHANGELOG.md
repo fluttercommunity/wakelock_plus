@@ -1,3 +1,13 @@
+## [1.6.0]
+* [#134](https://github.com/fluttercommunity/wakelock_plus/pull/134): fix(android): defer wakelock toggle when no activity is attached. Thanks [sadaqatdev](https://github.com/sadaqatdev).
+* [#136](https://github.com/fluttercommunity/wakelock_plus/pull/136): Migrated plugin to Built-in Kotlin Gradle Plugin (KGP). Thanks [drmirk](https://github.com/drmirk).
+* [#138](https://github.com/fluttercommunity/wakelock_plus/pull/138): Flutter 3.44 upgrade. Thanks [diegotori](https://github.com/diegotori).
+* [#139](https://github.com/fluttercommunity/wakelock_plus/pull/139): Swift Package Manager fixes. Thanks [diegotori](https://github.com/diegotori).
+* **BREAKING CHANGES**:
+  - Dart
+    * Library now really requires Dart version `3.11` or higher.
+    * Library now really requires Flutter version `3.41` or higher.
+
 ## [1.5.1]
 * [#126](https://github.com/fluttercommunity/wakelock_plus/pull/126): wakelock_plus_platform_interface Flutter 3.38 downgrade. Thanks [diegotori](https://github.com/diegotori).
 
