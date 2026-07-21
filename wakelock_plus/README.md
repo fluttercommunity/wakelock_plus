@@ -36,8 +36,8 @@ automatically.
 ## Framework and Platform Requirements
 
 * Flutter
-  - Flutter SDK >=3.38.0
-  - Dart SDK >=3.10.0
+  - Flutter SDK >=3.41.0
+  - Dart SDK >=3.11.0
 * Android
   - Android API Level 24 (Nougat) or higher
   - Java 17 or higher
