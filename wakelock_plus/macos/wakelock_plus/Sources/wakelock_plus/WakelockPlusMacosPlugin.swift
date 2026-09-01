@@ -1,6 +1,5 @@
 import Cocoa
 import FlutterMacOS
-import IOKit.pwr_mgt
 
 public class WakelockPlusMacosPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -8,9 +7,8 @@ public class WakelockPlusMacosPlugin: NSObject, FlutterPlugin {
     let instance = WakelockPlusMacosPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
-  
-  var assertionID: IOPMAssertionID = 0
-  var wakelockEnabled = false
+
+  private var activity: NSObjectProtocol?
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
@@ -20,29 +18,29 @@ public class WakelockPlusMacosPlugin: NSObject, FlutterPlugin {
       if enable {
         enableWakelock()
       } else {
-        disableWakelock();
+        disableWakelock()
       }
       result(true)
     case "enabled":
-      result(wakelockEnabled)
+      result(activity != nil)
     default:
       result(FlutterMethodNotImplemented)
     }
   }
-  
+
   func enableWakelock(reason: String = "Disabling display sleep") {
-    if !wakelockEnabled {
-      wakelockEnabled = IOPMAssertionCreateWithName( kIOPMAssertionTypeNoDisplaySleep as CFString,
-                                       IOPMAssertionLevel(kIOPMAssertionLevelOn),
-                                       reason as CFString,
-                                       &assertionID) == kIOReturnSuccess
+    if activity == nil {
+      activity = ProcessInfo.processInfo.beginActivity(
+        options: [.idleDisplaySleepDisabled, .idleSystemSleepDisabled],
+        reason: reason
+      )
     }
   }
-  
+
   func disableWakelock() {
-    if wakelockEnabled {
-      IOPMAssertionRelease(assertionID)
-      wakelockEnabled = false
+    if let activity = activity {
+      ProcessInfo.processInfo.endActivity(activity)
+      self.activity = nil
     }
   }
 }
