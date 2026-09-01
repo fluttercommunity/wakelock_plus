@@ -1,7 +1,8 @@
-## [Unreleased]
-* Fix Android build on AGP 8 / Kotlin 2.2+ by setting Pigeon `KotlinOptions.package`
-  so generated API types are not left in the default package (fixes missing
-  `WakelockPlusPlugin` / `cannot find symbol` in `GeneratedPluginRegistrant`).
+## [1.8.0]
+* [#129](https://github.com/fluttercommunity/wakelock_plus/pull/129): Add tvOS pod support. Thanks [edde746](https://github.com/edde746).
+* [#145](https://github.com/fluttercommunity/wakelock_plus/pull/145): Update README link to main package. Thanks [aricodeine](https://github.com/aricodeine).
+* [#147](https://github.com/fluttercommunity/wakelock_plus/pull/147): fix(ios): raise SPM platform to iOS 13.0 to match FlutterFramework. Thanks [Harunn33](https://github.com/Harunn33).
+* [#148](https://github.com/fluttercommunity/wakelock_plus/pull/148): Flutter 3.47 upgrade. Thanks [diegotori](https://github.com/diegotori).
 
 ## [1.7.0]
 * [#134](https://github.com/fluttercommunity/wakelock_plus/pull/134): fix(android): defer wakelock toggle when no activity is attached. Thanks [sadaqatdev](https://github.com/sadaqatdev).
