@@ -1,3 +1,6 @@
+## [1.8.1]
+* [#149](https://github.com/fluttercommunity/wakelock_plus/pull/149): Update dbus to ^0.8.0. Thanks [Carapacik](https://github.com/Carapacik).
+
 ## [1.8.0]
 * [#129](https://github.com/fluttercommunity/wakelock_plus/pull/129): Add tvOS pod support. Thanks [edde746](https://github.com/edde746).
 * [#145](https://github.com/fluttercommunity/wakelock_plus/pull/145): Update README link to main package. Thanks [aricodeine](https://github.com/aricodeine).
