@@ -76,3 +76,6 @@ pubspec.lock
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/example/ios/Podfile
+
+# AI Agent exclusions
+.artifacts

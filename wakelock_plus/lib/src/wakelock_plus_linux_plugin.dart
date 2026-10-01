@@ -57,18 +57,13 @@ class WakelockPlusLinuxPlugin extends WakelockPlusPlatformInterface {
     if (enable) {
       final appName = await _appName;
       _requestHandle = await _object
-          .callMethod(
-            'org.freedesktop.portal.Inhibit',
-            'Inhibit',
-            [
-              const DBusString(''),
-              const DBusUint32(8),
-              DBusDict.stringVariant({
-                'reason': DBusString('$appName: wakelock active'),
-              }),
-            ],
-            replySignature: DBusSignature('o'),
-          )
+          .callMethod('org.freedesktop.portal.Inhibit', 'Inhibit', [
+            const DBusString(''),
+            const DBusUint32(8),
+            DBusDict.stringVariant({
+              'reason': DBusString('$appName: wakelock active'),
+            }),
+          ], replySignature: DBusSignature('o'))
           .then((response) => response.returnValues.single.asObjectPath());
     } else if (_requestHandle != null) {
       final requestObject = DBusRemoteObject(

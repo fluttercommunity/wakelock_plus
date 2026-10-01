@@ -6,7 +6,8 @@ import PackageDescription
 let package = Package(
     name: "wakelock_plus",
     platforms: [
-        .iOS("11.0")
+        .iOS("13.0"),
+        .tvOS("13.0")
     ],
     products: [
         .library(name: "wakelock-plus", targets: ["wakelock_plus"])

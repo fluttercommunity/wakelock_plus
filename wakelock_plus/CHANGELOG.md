@@ -1,3 +1,12 @@
+## [1.8.1]
+* [#149](https://github.com/fluttercommunity/wakelock_plus/pull/149): Update dbus to ^0.8.0. Thanks [Carapacik](https://github.com/Carapacik).
+
+## [1.8.0]
+* [#129](https://github.com/fluttercommunity/wakelock_plus/pull/129): Add tvOS pod support. Thanks [edde746](https://github.com/edde746).
+* [#145](https://github.com/fluttercommunity/wakelock_plus/pull/145): Update README link to main package. Thanks [aricodeine](https://github.com/aricodeine).
+* [#147](https://github.com/fluttercommunity/wakelock_plus/pull/147): fix(ios): raise SPM platform to iOS 13.0 to match FlutterFramework. Thanks [Harunn33](https://github.com/Harunn33).
+* [#148](https://github.com/fluttercommunity/wakelock_plus/pull/148): Flutter 3.47 upgrade. Thanks [diegotori](https://github.com/diegotori).
+
 ## [1.7.0]
 * [#134](https://github.com/fluttercommunity/wakelock_plus/pull/134): fix(android): defer wakelock toggle when no activity is attached. Thanks [sadaqatdev](https://github.com/sadaqatdev).
 * [#136](https://github.com/fluttercommunity/wakelock_plus/pull/136): Migrated plugin to Built-in Kotlin Gradle Plugin (KGP). Thanks [drmirk](https://github.com/drmirk).

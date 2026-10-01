@@ -2,12 +2,12 @@ name: wakelock_plus
 description: >-2
   Plugin that allows you to keep the device screen awake, i.e. prevent the screen from sleeping on
   Android, iOS, macOS, Windows, Linux, and web.
-version: 1.7.0
+version: 1.8.1
 repository: https://github.com/fluttercommunity/wakelock_plus/tree/main/wakelock_plus
 
 environment:
-  sdk: '>=3.11.0 <4.0.0'
-  flutter: ">=3.41.0"
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:
@@ -15,13 +15,13 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   meta: ^1.17.0
-  wakelock_plus_platform_interface: ^1.6.0
+  wakelock_plus_platform_interface: ^1.7.0
 
   # Windows dependencies
   win32: ">=6.0.1 <7.0.0"
 
   # Linux dependencies
-  dbus: ^0.7.12
+  dbus: ^0.8.0
   package_info_plus: ">=10.1.0 <11.0.0"
 
   # Web dependencies
@@ -31,7 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  pigeon: ^26.2.3 # dart run pigeon --input "pigeons/messages.dart"
+  pigeon: ^28.0.0 # dart run pigeon --input "pigeons/messages.dart"
   mocktail: ^1.0.5
   
 # For information on the generic Dart part of this file, see the
@@ -55,6 +55,8 @@ flutter:
         package: dev.fluttercommunity.plus.wakelock
         pluginClass: WakelockPlusPlugin
       ios:
+        pluginClass: WakelockPlusPlugin
+      tvos:
         pluginClass: WakelockPlusPlugin
       windows:
         dartPluginClass: WakelockPlusWindowsPlugin

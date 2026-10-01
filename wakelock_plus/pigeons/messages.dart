@@ -21,7 +21,10 @@ class IsEnabledMessage {
       prefix: 'WAKELOCKPLUS',
       headerIncludePath: './include/wakelock_plus/messages.g.h',
     ),
-    kotlinOptions: KotlinOptions(errorClassName: "WakelockPlusFlutterError"),
+    kotlinOptions: KotlinOptions(
+      errorClassName: "WakelockPlusFlutterError",
+      package: "dev.fluttercommunity.plus.wakelock",
+    ),
     kotlinOut:
         'android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt',
   ),

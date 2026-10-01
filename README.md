@@ -19,7 +19,7 @@ from sleeping.
 ## Getting started
 
 To learn more about the plugin and getting started, you can view the main package's 
-[README](https://github.com/fluttercommunity/wakelock_plus/blob/main/wakelock/README.md).
+[README](https://github.com/fluttercommunity/wakelock_plus/blob/main/README.md).
 
 ### Plugin structure
 

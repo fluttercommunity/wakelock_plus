@@ -1,9 +1,5 @@
 package dev.fluttercommunity.plus.wakelock
 
-import IsEnabledMessage
-import ToggleMessage
-import WakelockPlusApi
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding

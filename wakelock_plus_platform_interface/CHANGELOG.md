@@ -1,3 +1,6 @@
+## [1.7.0]
+* [#148](https://github.com/fluttercommunity/wakelock_plus/pull/148): Flutter 3.47 upgrade. Thanks [diegotori](https://github.com/diegotori).
+
 ## [1.6.0]
 * [#134](https://github.com/fluttercommunity/wakelock_plus/pull/134): fix(android): defer wakelock toggle when no activity is attached. Thanks [sadaqatdev](https://github.com/sadaqatdev).
 * [#136](https://github.com/fluttercommunity/wakelock_plus/pull/136): Migrated plugin to Built-in Kotlin Gradle Plugin (KGP). Thanks [drmirk](https://github.com/drmirk).

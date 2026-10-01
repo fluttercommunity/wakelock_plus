@@ -1,7 +1,5 @@
 package dev.fluttercommunity.plus.wakelock
 
-import IsEnabledMessage
-import ToggleMessage
 import android.app.Activity
 import android.view.WindowManager
 
