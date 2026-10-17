@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 import 'package:win32/win32.dart';
 
@@ -26,9 +27,15 @@ class WakelockPlusWindowsPlugin extends WakelockPlusPlatformInterface {
     }
 
     // SetThreadExecutionState returns 0 if the operation failed.
-    if (response != 0) {
-      _enabled = enable;
+    if (response == 0) {
+      final operation = enable ? 'enable' : 'disable';
+      throw PlatformException(
+        code: 'wakelock-error',
+        message: 'Failed to $operation wakelock.',
+        details: {'operation': operation},
+      );
     }
+    _enabled = enable;
   }
 
   @override
