@@ -1,3 +1,6 @@
+## [1.8.2]
+* [#142](https://github.com/fluttercommunity/wakelock_plus/pull/142): Include no_sleep.js only on web builds. Thanks [DublikuntMux](https://github.com/DublikuntMux).
+
 ## [1.8.1]
 * [#149](https://github.com/fluttercommunity/wakelock_plus/pull/149): Update dbus to ^0.8.0. Thanks [Carapacik](https://github.com/Carapacik).
 
