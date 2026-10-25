@@ -17,12 +17,22 @@ public class WakelockPlusMacosPlugin: NSObject, FlutterPlugin {
     case "toggle":
       let args = call.arguments as? Dictionary<String, Any>
       let enable = args!["enable"] as! Bool
-      if enable {
-        enableWakelock()
+      let status = enable ? enableWakelock() : disableWakelock()
+      if status == kIOReturnSuccess {
+        result(true)
       } else {
-        disableWakelock();
+        let operation = enable ? "enable" : "disable"
+        let description = String(cString: mach_error_string(status))
+        result(FlutterError(
+          code: "wakelock-error",
+          message: "Failed to \(operation) wakelock: \(description)",
+          details: [
+            "operation": operation,
+            "status": Int(status),
+            "description": description
+          ]
+        ))
       }
-      result(true)
     case "enabled":
       result(wakelockEnabled)
     default:
@@ -30,19 +40,24 @@ public class WakelockPlusMacosPlugin: NSObject, FlutterPlugin {
     }
   }
   
-  func enableWakelock(reason: String = "Disabling display sleep") {
-    if !wakelockEnabled {
-      wakelockEnabled = IOPMAssertionCreateWithName( kIOPMAssertionTypeNoDisplaySleep as CFString,
-                                       IOPMAssertionLevel(kIOPMAssertionLevelOn),
-                                       reason as CFString,
-                                       &assertionID) == kIOReturnSuccess
-    }
+  func enableWakelock(reason: String = "Disabling display sleep") -> IOReturn {
+    guard !wakelockEnabled else { return kIOReturnSuccess }
+    let status = IOPMAssertionCreateWithName(
+      kIOPMAssertionTypeNoDisplaySleep as CFString,
+      IOPMAssertionLevel(kIOPMAssertionLevelOn),
+      reason as CFString,
+      &assertionID
+    )
+    wakelockEnabled = status == kIOReturnSuccess
+    return status
   }
   
-  func disableWakelock() {
-    if wakelockEnabled {
-      IOPMAssertionRelease(assertionID)
+  func disableWakelock() -> IOReturn {
+    guard wakelockEnabled else { return kIOReturnSuccess }
+    let status = IOPMAssertionRelease(assertionID)
+    if status == kIOReturnSuccess {
       wakelockEnabled = false
     }
+    return status
   }
 }
