@@ -121,6 +121,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: ${{ fromJson(needs.setup_matrix.outputs.flutter_versions_json) }}
+      fail-fast: false
     name: Android Example Build (${{ matrix.flutter_version }})
     steps:
       - uses: actions/checkout@v6
@@ -134,6 +135,9 @@ jobs:
           channel: ${{ (!contains(matrix.flutter_version, '.') && !contains(matrix.flutter_version, 'x')) && matrix.flutter_version || '' }}
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Match Android tooling to Flutter beta
+        if: matrix.flutter_version == 'beta'
+        run: python3 .github/scripts/align_android_beta_toolchain.py
       - name: Build Android APK
         run: |
           cd wakelock_plus/example
@@ -170,6 +174,9 @@ jobs:
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
+      - name: Match Android tooling to Flutter beta
+        if: matrix.flutter_version == 'beta'
+        run: python3 .github/scripts/align_android_beta_toolchain.py
       - name: Enable KVM
         # Linux runners require KVM to run Android emulators with hardware acceleration
         run: |
@@ -449,6 +456,21 @@ jobs:
           cd wakelock_plus/example
           flutter pub get
           flutter drive -d windows --driver=test_driver/integration_test.dart --target=integration_test/wakelock_plus_test.dart
+
+  # Run the browser API mocks without requiring a real browser or Flutter SDK.
+  web_js_regression_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Web JavaScript Regression Tests
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        run: node --check wakelock_plus/lib/assets/no_sleep.js
+      - name: Run web concurrency regression tests
+        run: node --test wakelock_plus/test/no_sleep_concurrency.test.cjs
 
   # --- WEB ---
 
